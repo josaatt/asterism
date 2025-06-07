@@ -42,8 +42,8 @@ export const mockProjects: Project[] = [
     priority: "brådskande",
     ownerId: "jurist-1",
     members: [
-      { userId: "jurist-1", permission: "owner" },
-      { userId: "admin-1", permission: "editor" }
+      { userId: "jurist-1", role: "ansvarig" },
+      { userId: "admin-1", role: "medarbetare" }
     ],
     artefacts: ["art-1", "art-2"],
     createdAt: new Date("2024-01-15"),
@@ -58,8 +58,8 @@ export const mockProjects: Project[] = [
     priority: "normal",
     ownerId: "admin-1",
     members: [
-      { userId: "admin-1", permission: "owner" },
-      { userId: "jurist-1", permission: "editor" }
+      { userId: "admin-1", role: "ansvarig" },
+      { userId: "jurist-1", role: "medarbetare" }
     ],
     artefacts: ["art-3"],
     createdAt: new Date("2024-02-01"),
@@ -74,7 +74,7 @@ export const mockProjects: Project[] = [
     priority: "brådskande",
     ownerId: "jurist-1",
     members: [
-      { userId: "jurist-1", permission: "owner" }
+      { userId: "jurist-1", role: "ansvarig" }
     ],
     artefacts: [],
     createdAt: new Date("2024-02-15"),
@@ -89,9 +89,9 @@ export const mockProjects: Project[] = [
     priority: "normal",
     ownerId: "jurist-2",
     members: [
-      { userId: "jurist-2", permission: "owner" },
-      { userId: "jurist-1", permission: "editor" },
-      { userId: "admin-1", permission: "viewer" }
+      { userId: "jurist-2", role: "ansvarig" },
+      { userId: "jurist-1", role: "medarbetare" },
+      { userId: "admin-1", role: "medarbetare" }
     ],
     artefacts: [],
     createdAt: new Date("2024-03-01"),
@@ -106,8 +106,8 @@ export const mockProjects: Project[] = [
     priority: "ej_prioritet",
     ownerId: "jurist-3",
     members: [
-      { userId: "jurist-3", permission: "owner" },
-      { userId: "jurist-2", permission: "editor" }
+      { userId: "jurist-3", role: "ansvarig" },
+      { userId: "jurist-2", role: "medarbetare" }
     ],
     artefacts: [],
     createdAt: new Date("2024-03-05"),
@@ -122,9 +122,9 @@ export const mockProjects: Project[] = [
     priority: "ej_prioritet",
     ownerId: "admin-1",
     members: [
-      { userId: "admin-1", permission: "owner" },
-      { userId: "jurist-1", permission: "editor" },
-      { userId: "jurist-3", permission: "editor" }
+      { userId: "admin-1", role: "ansvarig" },
+      { userId: "jurist-1", role: "medarbetare" },
+      { userId: "jurist-3", role: "medarbetare" }
     ],
     artefacts: [],
     createdAt: new Date("2024-01-10"),

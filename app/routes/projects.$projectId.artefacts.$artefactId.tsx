@@ -39,8 +39,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
 
   const creator = getUserById(artefact.createdBy);
-  const userPermission = project.members.find(m => m.userId === currentUser.id)?.permission;
-  const canEdit = userPermission === 'owner' || userPermission === 'editor';
+  const userRole = project.members.find(m => m.userId === currentUser.id)?.role;
+  const canEdit = userRole === 'ansvarig' || userRole === 'medarbetare';
 
   return json({ 
     project, 

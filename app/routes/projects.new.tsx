@@ -42,8 +42,9 @@ export async function action({ request }: ActionFunctionArgs) {
     description: description?.trim() || undefined,
     caseNumber: caseNumber?.trim() || undefined,
     status: 'active' as const,
+    priority: 'normal' as const,
     ownerId: currentUser.id,
-    members: [{ userId: currentUser.id, permission: 'owner' as const }],
+    members: [{ userId: currentUser.id, role: 'ansvarig' as const }],
     artefacts: [],
     createdAt: new Date(),
     updatedAt: new Date()

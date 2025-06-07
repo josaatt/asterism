@@ -16,8 +16,8 @@ export type ProjectStatus = 'active' | 'archived' | 'pending';
 // Prioritet för ett projekt
 export type ProjectPriority = 'brådskande' | 'normal' | 'ej_prioritet';
 
-// Behörighetsnivåer inom ett projekt
-export type ProjectPermission = 'owner' | 'editor' | 'commenter' | 'viewer';
+// Roller inom ett projekt
+export type ProjectRole = 'ansvarig' | 'medarbetare';
 
 export interface User {
   id: string;
@@ -44,8 +44,8 @@ export interface Project {
   caseNumber?: string;
   status: ProjectStatus;
   priority: ProjectPriority;
-  ownerId: string; // userId
-  members: { userId: string; permission: ProjectPermission; }[];
+  ownerId: string; // userId - den som skapade ärendet
+  members: { userId: string; role: ProjectRole; }[];
   artefacts: string[]; // Lista med artefakt-IDs
   createdAt: Date;
   updatedAt: Date;

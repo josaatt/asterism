@@ -78,8 +78,8 @@ export default function ProjectView() {
     return location.pathname.endsWith(tab.path);
   })?.id || 'overview';
 
-  const userPermission = project.members.find(m => m.userId === currentUser.id)?.permission;
-  const canEdit = userPermission === 'owner' || userPermission === 'editor';
+  const userRole = project.members.find(m => m.userId === currentUser.id)?.role;
+  const canEdit = userRole === 'ansvarig' || userRole === 'medarbetare';
 
   return (
     <div className="min-h-screen bg-background">
@@ -97,52 +97,37 @@ export default function ProjectView() {
         
         {/* Projekt-header */}
         <header className="mb-8 max-w-6xl mx-auto">
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h1 
-                className="text-3xl md:text-4xl text-foreground mb-2 lowercase"
-                style={{ fontFamily: '"La Belle Aurore", cursive' }}
-              >
-                <span className="text-primary text-lg leading-none translate-y-[-0.2em] mr-3">¶</span>
-                {project.name}
-              </h1>
+          <div className="mb-4">
+            <h1 
+              className="text-3xl md:text-4xl text-foreground mb-2 lowercase"
+              style={{ fontFamily: '"La Belle Aurore", cursive' }}
+            >
+              {project.name}
+            </h1>
+            <div className="flex gap-2 mb-2">
               {project.caseNumber && (
-                <div className="text-sm text-muted-foreground mb-2">
-                  Ärendenummer: {project.caseNumber}
-                </div>
+                <span className={cn(componentStyles.metadataTag, "text-xs")}>
+                  {project.caseNumber}
+                </span>
               )}
-              {project.description && (
-                <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
-                  {project.description}
-                </p>
-              )}
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <div className={cn(
+              <span className={cn(
                 componentStyles.metadataTag,
+                "text-xs",
                 project.status === 'active' ? "bg-[#FEE2E2] text-[#991B1B]" :
                 project.status === 'pending' ? "bg-[#F3F4F6] text-[#374151]" :
                 "bg-[#FEF3C7] text-[#92400E]"
               )}>
                 {project.status === 'active' ? 'Aktiv' : 
                  project.status === 'pending' ? 'Väntande' : 'Arkiverad'}
-              </div>
+              </span>
             </div>
+              {project.description && (
+                <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
+                  {project.description}
+                </p>
+              )}
           </div>
 
-          {/* Projekt-metadata */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-muted-foreground">
-            <div>
-              <strong>Ägare:</strong> {getUserById(project.ownerId)?.name}
-            </div>
-            <div>
-              <strong>Medlemmar:</strong> {project.members.length}
-            </div>
-            <div>
-              <strong>Artefakter:</strong> {artefacts.length}
-            </div>
-          </div>
         </header>
 
         {/* Navigeringsflikar */}
@@ -281,9 +266,14 @@ function ProjectOverview({
                   <div className="font-medium text-sm">{member.user?.name}</div>
                   <div className="text-xs text-muted-foreground">{member.user?.email}</div>
                 </div>
-                <div className="text-xs px-2 py-1 bg-muted rounded-full">
-                  {member.permission}
-                </div>
+                <span className={cn(
+                  "text-xs px-3 py-1.5 rounded-full font-medium",
+                  member.role === 'ansvarig' 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-muted text-foreground border border-border"
+                )}>
+                  {member.role}
+                </span>
               </div>
             ))}
           </div>

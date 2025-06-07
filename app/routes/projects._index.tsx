@@ -506,12 +506,18 @@ function ProjectTableView({ projects, tableSort, onSort }: {
   );
 }
 
-// Project Card Component (unchanged)
+// Project Card Component
 function ProjectCard({ project }: { project: any }) {
   const statusColors: Record<string, string> = {
     active: 'border-l-green-500',
     pending: 'border-l-yellow-500', 
     archived: 'border-l-gray-400'
+  };
+
+  const priorityColors: Record<string, string> = {
+    brådskande: 'bg-[#FEE2E2] text-[#991B1B]',
+    normal: 'bg-[#F3F4F6] text-[#374151]',
+    ej_prioritet: 'bg-[#FEF3C7] text-[#92400E]'
   };
 
   return (
@@ -523,46 +529,30 @@ function ProjectCard({ project }: { project: any }) {
         statusColors[project.status]
       )}
     >
-      <div className="mb-4">
-        <h3 className="text-lg font-serif font-medium text-foreground mb-2">
+      <div className="space-y-3">
+        <h3 className="text-lg font-serif font-medium text-foreground">
           {project.name}
         </h3>
-        {project.caseNumber && (
-          <div className="text-sm text-muted-foreground mb-2">
-            Ärendenummer: {project.caseNumber}
-          </div>
-        )}
+        
         {project.description && (
           <p className="text-sm text-muted-foreground line-clamp-2">
             {project.description}
           </p>
         )}
-      </div>
 
-      <div className="space-y-3">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Artefakter: {project.artefacts?.length || 0}</span>
-          <span>Medlemmar: {project.members.length}</span>
-        </div>
-        
-        <div className="flex flex-wrap gap-1">
-          {project.memberDetails.slice(0, 3).map((member: any) => (
-            <div
-              key={member.userId}
-              className="text-xs px-2 py-1 bg-muted rounded-full"
-              title={`${member.user?.name} (${member.permission})`}
-            >
-              {member.user?.name?.split(' ').map((n: string) => n[0]).join('')}
-            </div>
-          ))}
-          {project.members.length > 3 && (
-            <div className="text-xs px-2 py-1 bg-muted rounded-full">
-              +{project.members.length - 3}
-            </div>
+        <div className="flex flex-wrap gap-2">
+          {project.caseNumber && (
+            <span className={cn(componentStyles.metadataTag, "text-xs")}>
+              {project.caseNumber}
+            </span>
           )}
+          <span className={cn(componentStyles.metadataTag, "text-xs", priorityColors[project.priority])}>
+            {project.priority === 'brådskande' ? 'brådskande' : 
+             project.priority === 'normal' ? 'normal' : 'ej prioritet'}
+          </span>
         </div>
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted-foreground pt-2">
           Uppdaterad: {new Date(project.updatedAt).toLocaleDateString('sv-SE')}
         </div>
       </div>
