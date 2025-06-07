@@ -6,6 +6,12 @@ import { componentStyles } from "~/design-system/components";
 import { legalCases } from "~/data/legal-cases";
 import ViewToggle from "~/components/comp-108";
 import TableFilters from "~/components/ui/table-filters";
+import LegalFilters, { 
+  type LegalFilter, 
+  LegalFilterType, 
+  FilterOperator 
+} from "~/components/ui/legal-filters";
+import AddLegalFilter from "~/components/ui/add-legal-filter";
 export const meta: MetaFunction = () => {
   return [
     { title: "Rättspraxis - Asterism" },
@@ -16,49 +22,108 @@ export const meta: MetaFunction = () => {
 export default function Rättspraxis() {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   
-  // Table filter states
+  // Table filter states (for table view)
   const [searchTerm, setSearchTerm] = useState("");
   const [courtFilter, setCourtFilter] = useState("Alla domstolar");
   const [legalAreaFilter, setLegalAreaFilter] = useState("Alla rättsområden");
   const [yearFilter, setYearFilter] = useState("Alla år");
 
+  // Advanced filter states (for card view)
+  const [legalFilters, setLegalFilters] = useState<LegalFilter[]>([]);
+
   // Filter legal cases based on current filters
   const filteredCases = useMemo(() => {
     return legalCases.filter((legalCase) => {
-      // Search term filter
-      if (searchTerm) {
-        const searchLower = searchTerm.toLowerCase();
-        const matchesSearch = 
-          legalCase.title.toLowerCase().includes(searchLower) ||
-          legalCase.summary.toLowerCase().includes(searchLower) ||
-          legalCase.background.toLowerCase().includes(searchLower) ||
-          legalCase.caseNumber.toLowerCase().includes(searchLower) ||
-          legalCase.keywords.some(keyword => keyword.toLowerCase().includes(searchLower));
-        
-        if (!matchesSearch) return false;
-      }
+      // For table view, use simple filters
+      if (viewMode === 'table') {
+        // Search term filter
+        if (searchTerm) {
+          const searchLower = searchTerm.toLowerCase();
+          const matchesSearch = 
+            legalCase.title.toLowerCase().includes(searchLower) ||
+            legalCase.summary.toLowerCase().includes(searchLower) ||
+            legalCase.background.toLowerCase().includes(searchLower) ||
+            legalCase.caseNumber.toLowerCase().includes(searchLower) ||
+            legalCase.keywords.some(keyword => keyword.toLowerCase().includes(searchLower));
+          
+          if (!matchesSearch) return false;
+        }
 
-      // Court filter
-      if (courtFilter !== "Alla domstolar" && legalCase.court !== courtFilter) {
-        return false;
-      }
-
-      // Legal area filter
-      if (legalAreaFilter !== "Alla rättsområden" && legalCase.legalArea !== legalAreaFilter) {
-        return false;
-      }
-
-      // Year filter
-      if (yearFilter !== "Alla år") {
-        const caseYear = legalCase.date.split('-')[0];
-        if (caseYear !== yearFilter) {
+        // Court filter
+        if (courtFilter !== "Alla domstolar" && legalCase.court !== courtFilter) {
           return false;
+        }
+
+        // Legal area filter
+        if (legalAreaFilter !== "Alla rättsområden" && legalCase.legalArea !== legalAreaFilter) {
+          return false;
+        }
+
+        // Year filter
+        if (yearFilter !== "Alla år") {
+          const caseYear = legalCase.date.split('-')[0];
+          if (caseYear !== yearFilter) {
+            return false;
+          }
+        }
+      } else {
+        // For card view, use advanced filters
+        for (const filter of legalFilters) {
+          if (filter.value.length === 0) continue;
+
+          const filterPassed = (() => {
+            switch (filter.type) {
+              case LegalFilterType.COURT:
+                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                  return filter.value.includes(legalCase.court);
+                } else if (filter.operator === FilterOperator.IS_NOT) {
+                  return !filter.value.includes(legalCase.court);
+                }
+                break;
+              
+              case LegalFilterType.LEGAL_AREA:
+                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                  return filter.value.includes(legalCase.legalArea);
+                } else if (filter.operator === FilterOperator.IS_NOT) {
+                  return !filter.value.includes(legalCase.legalArea);
+                }
+                break;
+              
+              case LegalFilterType.YEAR:
+                const caseYear = legalCase.date.split('-')[0];
+                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                  return filter.value.includes(caseYear);
+                } else if (filter.operator === FilterOperator.IS_NOT) {
+                  return !filter.value.includes(caseYear);
+                }
+                break;
+              
+              case LegalFilterType.CASE_NUMBER:
+                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                  return filter.value.includes(legalCase.caseNumber);
+                } else if (filter.operator === FilterOperator.IS_NOT) {
+                  return !filter.value.includes(legalCase.caseNumber);
+                }
+                break;
+              
+              case LegalFilterType.KEYWORDS:
+                if (filter.operator === FilterOperator.INCLUDE || filter.operator === FilterOperator.INCLUDE_ANY_OF) {
+                  return filter.value.some(keyword => legalCase.keywords.includes(keyword));
+                } else if (filter.operator === FilterOperator.DO_NOT_INCLUDE || filter.operator === FilterOperator.EXCLUDE_ALL_OF) {
+                  return !filter.value.some(keyword => legalCase.keywords.includes(keyword));
+                }
+                break;
+            }
+            return true;
+          })();
+
+          if (!filterPassed) return false;
         }
       }
 
       return true;
     });
-  }, [searchTerm, courtFilter, legalAreaFilter, yearFilter]);
+  }, [searchTerm, courtFilter, legalAreaFilter, yearFilter, legalFilters, viewMode]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,6 +156,22 @@ export default function Rättspraxis() {
             </p>
           </div>
         </div>
+
+        {/* Filters Section - only show in card view */}
+        {viewMode === 'cards' && (
+          <div className="max-w-6xl mx-auto mb-8">
+            <div className="flex items-center gap-4 flex-wrap">
+              <AddLegalFilter 
+                onAddFilter={(filter) => setLegalFilters(prev => [...prev, filter])}
+                existingFilters={legalFilters}
+              />
+              <LegalFilters 
+                filters={legalFilters}
+                setFilters={setLegalFilters}
+              />
+            </div>
+          </div>
+        )}
 
         <main className="max-w-6xl mx-auto">
           {viewMode === 'cards' ? (

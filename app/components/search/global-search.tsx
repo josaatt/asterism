@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "@remix-run/react";
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,

@@ -15,10 +15,10 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request: _request }: LoaderFunctionArgs) {
   // I en riktig app skulle vi hämta användaren från session/cookies
-  const user = currentUser;
-  const projects = getProjectsForUser(user.id);
+  const _user = currentUser;
+  const projects = getProjectsForUser(_user.id);
   
   // Lägg till användarinformation för projektmedlemmar
   const projectsWithMembers = projects.map(project => ({
@@ -29,11 +29,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }))
   }));
 
-  return json({ user, projects: projectsWithMembers });
+  return json({ user: _user, projects: projectsWithMembers });
 }
 
 export default function ProjectsIndex() {
-  const { user, projects } = useLoaderData<typeof loader>();
+  const { user: _user, projects } = useLoaderData<typeof loader>();
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Alla status");
