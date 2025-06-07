@@ -9,6 +9,7 @@ import type { LinksFunction } from "@remix-run/node";
 
 import "./tailwind.css";
 import { GlobalSearch } from "~/components/search/global-search";
+import { Sidebar } from "~/components/ui/sidebar";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -43,9 +44,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <>
-      <Outlet />
+    <div className="flex h-screen">
+      <Sidebar />
+      <main className="flex-1 ml-12 overflow-auto">
+        <Outlet />
+      </main>
       <GlobalSearch />
-    </>
+    </div>
   );
 }
