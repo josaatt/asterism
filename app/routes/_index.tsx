@@ -51,10 +51,8 @@ export default function Index() {
                   index === 0 ? "cursor-pointer" : ""
                 )}
               >
-                <div className="mb-4">
-                  <span className="asterisk text-2xl">*</span>
-                </div>
-                <h2 className="text-xl font-serif mb-3 text-foreground">
+                <h2 className="text-2xl md:text-3xl mb-3 text-foreground lowercase flex items-start gap-3" style={{ fontFamily: '"La Belle Aurore", cursive' }}>
+                  <span className="text-primary text-lg leading-none translate-y-[-0.2em]">¶</span>
                   {feature.title}
                 </h2>
                 <p className={componentStyles.enhancedParagraph}>
