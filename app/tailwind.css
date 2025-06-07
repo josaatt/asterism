@@ -2,11 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  @apply bg-white dark:bg-gray-950;
+@layer base {
+  :root {
+    --background: 34 14% 90%; /* Warm gray #E8E5E1 */
+    --foreground: 0 0% 18%; /* Dark charcoal #2D2D2D */
+    --muted: 33 25% 94%;
+    --muted-foreground: 0 0% 40%;
+    --popover: 34 14% 90%;
+    --popover-foreground: 0 0% 18%;
+    --border: 30 10% 84%;
+    --input: 30 10% 84%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 18%;
+    --primary: 0 77% 24%; /* Burgundy #6D0E0E */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 30 10% 94%;
+    --secondary-foreground: 0 0% 18%;
+    --accent: 0 77% 24%; /* Burgundy accent */
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 0 77% 24%;
+    --radius: 0.5rem;
+  }
+  :root[class~="dark"] {
+    --background: 0 0% 18%;
+    --foreground: 34 14% 90%;
+    --muted: 0 0% 24%;
+    --muted-foreground: 0 0% 70%;
+    --popover: 0 0% 18%;
+    --popover-foreground: 34 14% 90%;
+    --border: 0 0% 26%;
+    --input: 0 0% 26%;
+    --card: 0 0% 20%;
+    --card-foreground: 34 14% 90%;
+    --primary: 0 77% 42%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 24%;
+    --secondary-foreground: 34 14% 90%;
+    --accent: 0 77% 42%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --ring: 0 77% 42%;
+    --radius: 0.5rem;
+  }
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Georgia", "Times New Roman", serif;
+    @apply font-normal tracking-tight;
+  }
+  p, span, div, li, a, button, input, select, textarea {
+    font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+    @apply leading-relaxed;
+  }
+  .grid-12 {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    @apply gap-4;
+  }
+  .asterisk {
+    @apply text-primary font-serif;
+    display: inline-block;
+  }
+  .pull-quote {
+    @apply text-xl md:text-2xl font-serif italic relative pl-6 my-8 max-w-2xl mx-auto;
+    border-left: 2px solid theme('colors.primary.DEFAULT');
+    line-height: 1.4;
+  }
+  .pull-quote::before {
+    content: '"';
+    @apply text-primary absolute -left-1 -top-2 text-4xl;
+  }
+  .footnote {
+    @apply text-xs text-muted-foreground mt-1 pt-1 border-t border-muted;
+  }
+  .page-transition {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  .loading-asterisk {
+    @apply inline-block animate-spin text-primary text-xl;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.3s ease-out forwards;
   }
 }
