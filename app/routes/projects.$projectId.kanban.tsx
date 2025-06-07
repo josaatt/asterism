@@ -326,9 +326,9 @@ function TaskCard({ task, isDragging = false }: { task: Task; isDragging?: boole
   };
 
   const priorityColors = {
-    low: 'bg-gray-100 text-gray-800',
-    medium: 'bg-yellow-100 text-yellow-800',
-    high: 'bg-red-100 text-red-800'
+    low: `${componentStyles.metadataTag} bg-[#FEF3C7] text-[#92400E]`,
+    medium: `${componentStyles.metadataTag} bg-[#F3F4F6] text-[#374151]`,
+    high: `${componentStyles.metadataTag} bg-[#FEE2E2] text-[#991B1B]`
   };
 
   return (

@@ -5,12 +5,26 @@ export const mockUsers: User[] = [
   {
     id: "admin-1",
     name: "Anna Administratör",
-    email: "anna.admin@juridikverktyg.se"
+    email: "anna.admin@juridikverktyg.se",
+    group: "Regelutveckling"
   },
   {
     id: "jurist-1", 
     name: "Erik Jurist",
-    email: "erik.jurist@juridikverktyg.se"
+    email: "erik.jurist@juridikverktyg.se",
+    group: "Dataskydd"
+  },
+  {
+    id: "jurist-2",
+    name: "Maria Nilsson",
+    email: "maria.nilsson@juridikverktyg.se",
+    group: "Regelutveckling"
+  },
+  {
+    id: "jurist-3",
+    name: "Lars Andersson", 
+    email: "lars.andersson@juridikverktyg.se",
+    group: "Dataskydd"
   }
 ];
 
@@ -53,6 +67,7 @@ export const mockProjects: Project[] = [
     id: "proj-3",
     name: "Avtalsrätt Digitala Tjänster", 
     description: "Analys av avtalsrättsliga frågor för digitala plattformar",
+    caseNumber: "JUR-2024-003",
     status: "pending",
     ownerId: "jurist-1",
     members: [
@@ -61,6 +76,53 @@ export const mockProjects: Project[] = [
     artefacts: [],
     createdAt: new Date("2024-02-15"),
     updatedAt: new Date("2024-02-15")
+  },
+  {
+    id: "proj-4",
+    name: "Upphovsrättsutredning AI-genererat innehåll",
+    description: "Juridisk analys av upphovsrättsfrågor kring AI-genererat innehåll och träningsdata",
+    caseNumber: "JUR-2024-004",
+    status: "active",
+    ownerId: "jurist-2",
+    members: [
+      { userId: "jurist-2", permission: "owner" },
+      { userId: "jurist-1", permission: "editor" },
+      { userId: "admin-1", permission: "viewer" }
+    ],
+    artefacts: [],
+    createdAt: new Date("2024-03-01"),
+    updatedAt: new Date("2024-03-10")
+  },
+  {
+    id: "proj-5",
+    name: "Skatterättslig prövning av gränsöverskridande transaktioner",
+    description: "Utredning av svenska skatteregler för internationella affärstransaktioner",
+    caseNumber: "JUR-2024-005",
+    status: "active",
+    ownerId: "jurist-3",
+    members: [
+      { userId: "jurist-3", permission: "owner" },
+      { userId: "jurist-2", permission: "editor" }
+    ],
+    artefacts: [],
+    createdAt: new Date("2024-03-05"),
+    updatedAt: new Date("2024-03-12")
+  },
+  {
+    id: "proj-6",
+    name: "Arbetsrättslig översyn av distansarbete",
+    description: "Genomgång av arbetstidslagen och kollektivavtals tillämpning vid hemarbete",
+    caseNumber: "JUR-2024-006",
+    status: "archived",
+    ownerId: "admin-1",
+    members: [
+      { userId: "admin-1", permission: "owner" },
+      { userId: "jurist-1", permission: "editor" },
+      { userId: "jurist-3", permission: "editor" }
+    ],
+    artefacts: [],
+    createdAt: new Date("2024-01-10"),
+    updatedAt: new Date("2024-02-28")
   }
 ];
 
@@ -164,6 +226,22 @@ export const mockAuditLog: AuditLogEntry[] = [
     projectId: "proj-2",
     action: "artefact.create",
     details: { artefactId: "art-3", title: "Förslag till ändring i Miljöbalken 2 kap", type: "statute_proposal" }
+  },
+  {
+    id: "log-5",
+    timestamp: new Date("2024-03-01T10:00:00"),
+    userId: "jurist-2",
+    projectId: "proj-4",
+    action: "project.create",
+    details: { projectName: "Upphovsrättsutredning AI-genererat innehåll" }
+  },
+  {
+    id: "log-6",
+    timestamp: new Date("2024-03-05T14:30:00"),
+    userId: "jurist-3",
+    projectId: "proj-5",
+    action: "project.create",
+    details: { projectName: "Skatterättslig prövning av gränsöverskridande transaktioner" }
   }
 ];
 
@@ -216,4 +294,12 @@ export function getAuditLogForProject(projectId: string): AuditLogEntry[] {
 
 export function getAllBookmarks(): Bookmark[] {
   return mockBookmarks;
+}
+
+export function getUsersByGroup(group: string): User[] {
+  return mockUsers.filter(user => user.group === group);
+}
+
+export function getGroupMembers(groupName: string): User[] {
+  return mockUsers.filter(user => user.group === groupName);
 }

@@ -255,7 +255,7 @@ export function Sidebar() {
                             {currentUser.name}
                           </span>
                           <span className="line-clamp-1 text-xs text-muted-foreground">
-                            {currentUser.email}
+                            {currentUser.group}
                           </span>
                         </div>
                       </div>

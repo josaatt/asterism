@@ -120,10 +120,10 @@ export default function ProjectView() {
             
             <div className="flex items-center gap-2">
               <div className={cn(
-                "px-2 py-1 rounded-full text-xs font-medium",
-                project.status === 'active' ? "bg-green-100 text-green-800" :
-                project.status === 'pending' ? "bg-yellow-100 text-yellow-800" :
-                "bg-gray-100 text-gray-800"
+                componentStyles.metadataTag,
+                project.status === 'active' ? "bg-[#FEE2E2] text-[#991B1B]" :
+                project.status === 'pending' ? "bg-[#F3F4F6] text-[#374151]" :
+                "bg-[#FEF3C7] text-[#92400E]"
               )}>
                 {project.status === 'active' ? 'Aktiv' : 
                  project.status === 'pending' ? 'Väntande' : 'Arkiverad'}

@@ -179,8 +179,8 @@ export default function ArtefactView() {
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <span className={cn(
-                "px-2 py-1 rounded-full text-xs",
-                isMockup ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800"
+                componentStyles.metadataTag,
+                isMockup ? "bg-[#F3F4F6] text-[#374151]" : "bg-[#FEE2E2] text-[#991B1B]"
               )}>
                 {typeLabels[artefact.type]}
               </span>

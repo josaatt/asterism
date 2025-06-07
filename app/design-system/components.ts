@@ -8,8 +8,8 @@ export const componentStyles = {
   
   // Metadata tags pattern
   metadataTag: `
-    text-xs border-b-2 border-primary/30 hover:border-primary/100 
-    transition-colors duration-300 font-normal pb-1
+    text-xs px-2 py-1 bg-muted text-muted-foreground rounded-sm
+    transition-colors duration-300 font-normal
   `,
   
   // Button pattern
@@ -37,8 +37,8 @@ export const componentStyles = {
   
   // Search input pattern
   searchInput: `
-    w-full py-2 text-sm bg-transparent border-0 border-b border-gray-300 
-    focus:border-gray-600 focus:outline-none transition-colors placeholder-gray-400
+    w-full py-2 text-sm bg-background border border-input rounded-md 
+    focus:border-ring focus:outline-none transition-colors placeholder-gray-400 px-3
   `,
   
   // Filter section pattern

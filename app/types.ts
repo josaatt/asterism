@@ -20,6 +20,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  group: string;
 }
 
 export interface Artefact {

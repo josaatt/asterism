@@ -425,7 +425,7 @@ const LegalFilterValueCombobox = ({
                           
                           return (
                             <div key={category.name} className="space-y-3">
-                              <h4 className="text-xs font-semibold text-foreground border-b border-border pb-1">
+                              <h4 className="text-xs font-semibold text-foreground pb-1">
                                 {category.name}
                               </h4>
                               <div className="space-y-1">

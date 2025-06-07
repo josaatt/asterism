@@ -301,13 +301,13 @@ function ProjectCardsView({
 function ProjectTableView({ projects }: { projects: any[] }) {
   const getStatusBadge = (status: string) => {
     const badges = {
-      active: { label: 'Aktiv', class: 'bg-green-100 text-green-800' },
-      pending: { label: 'Väntande', class: 'bg-yellow-100 text-yellow-800' },
-      archived: { label: 'Arkiverad', class: 'bg-gray-100 text-gray-800' }
+      active: { label: 'Aktiv', class: 'bg-[#FEE2E2] text-[#991B1B]' },
+      pending: { label: 'Väntande', class: 'bg-[#F3F4F6] text-[#374151]' },
+      archived: { label: 'Arkiverad', class: 'bg-[#FEF3C7] text-[#92400E]' }
     };
     const badge = badges[status as keyof typeof badges] || badges.active;
     return (
-      <span className={cn("px-2 py-1 rounded-full text-xs font-medium", badge.class)}>
+      <span className={cn(componentStyles.metadataTag, badge.class)}>
         {badge.label}
       </span>
     );
