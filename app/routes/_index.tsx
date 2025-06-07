@@ -47,18 +47,6 @@ export default function Index() {
           >
             ⁂ asterism
           </h1>
-          <p
-            className={cn(
-              componentStyles.enhancedParagraph,
-              "max-w-2xl mx-auto text-lg"
-            )}
-          >
-            <span className={componentStyles.enhancedFirstWord}>
-              Centraliserat
-            </span>{" "}
-            arbetsverktyg för juridisk forskning, dokumentation och
-            projekthantering. Skapat för att förenkla det juridiska arbetet.
-          </p>
         </header>
 
         {/* Mina arbetsuppgifter sektion */}
@@ -541,13 +529,12 @@ function WorkTasksSection() {
                           : componentStyles.tableRowOdd,
                         "cursor-pointer hover:bg-muted/50"
                       )}
-                      onClick={() => window.location.href = `/projects/${task.id}`}
+                      onClick={() =>
+                        (window.location.href = `/projects/${task.id}`)
+                      }
                     >
                       <td className={componentStyles.tableCell}>
                         <div className="space-y-1">
-                          <div className="text-sm font-medium">
-                            {task.title}
-                          </div>
                           <div>
                             <span
                               className={cn(
@@ -557,6 +544,9 @@ function WorkTasksSection() {
                             >
                               {task.caseNumber}
                             </span>
+                          </div>
+                          <div className="text-sm font-medium">
+                            {task.title}
                           </div>
                         </div>
                       </td>
@@ -603,7 +593,7 @@ function WorkTasksSection() {
                   <tr>
                     <SortableHeader
                       field="title"
-                      label="ärende"
+                      label="Ärende"
                       currentSort={groupTasksSort}
                       onSort={(field) => handleSort(field, true)}
                     />
@@ -615,7 +605,7 @@ function WorkTasksSection() {
                     />
                     <SortableHeader
                       field="assignedTo"
-                      label="tilldelad"
+                      label="Tilldelad"
                       currentSort={groupTasksSort}
                       onSort={(field) => handleSort(field, true)}
                     />
@@ -633,13 +623,12 @@ function WorkTasksSection() {
                           : componentStyles.tableRowOdd,
                         "cursor-pointer hover:bg-muted/50"
                       )}
-                      onClick={() => window.location.href = `/projects/${task.id}`}
+                      onClick={() =>
+                        (window.location.href = `/projects/${task.id}`)
+                      }
                     >
                       <td className={componentStyles.tableCell}>
                         <div className="space-y-1">
-                          <div className="text-sm font-medium">
-                            {task.title}
-                          </div>
                           <div>
                             <span
                               className={cn(
@@ -649,6 +638,9 @@ function WorkTasksSection() {
                             >
                               {task.caseNumber}
                             </span>
+                          </div>
+                          <div className="text-sm font-medium">
+                            {task.title}
                           </div>
                         </div>
                       </td>

@@ -220,7 +220,7 @@ export default function Rättspraxis() {
                         {legalCase.date}
                       </span>
                     </div>
-                    <h2 className="text-xl font-serif text-foreground mb-2 leading-tight">
+                    <h2 className="text-xl  text-foreground mb-2 leading-tight">
                       {legalCase.title}
                     </h2>
                     <span className={cn(componentStyles.metadataTag, "bg-primary/10 text-primary")}>
@@ -235,7 +235,7 @@ export default function Rättspraxis() {
                     </p>
                     
                     <div>
-                      <h3 className="text-sm font-serif font-medium text-foreground mb-2">
+                      <h3 className="text-sm  font-medium text-foreground mb-2">
                         Bakgrund
                       </h3>
                       <p className="text-sm text-muted-foreground leading-relaxed">
@@ -244,7 +244,7 @@ export default function Rättspraxis() {
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-serif font-medium text-foreground mb-2">
+                      <h3 className="text-sm  font-medium text-foreground mb-2">
                         Nyckelord
                       </h3>
                       <div className="flex flex-wrap gap-1">

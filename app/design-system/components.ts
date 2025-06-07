@@ -32,7 +32,7 @@ export const componentStyles = {
   
   // Enhanced first word pattern
   enhancedFirstWord: `
-    font-serif text-lg font-medium
+    text-lg font-medium
   `,
   
   // Search input pattern
@@ -43,7 +43,7 @@ export const componentStyles = {
   
   // Filter section pattern
   filterSection: `
-    text-sm uppercase tracking-wider text-muted-foreground font-medium font-serif
+    text-sm uppercase tracking-wider text-muted-foreground font-medium
   `,
 
   // Table styles for consistency
@@ -80,7 +80,7 @@ export const componentStyles = {
   `,
   
   tableTitle: `
-    font-serif font-medium text-foreground leading-tight
+    font-medium text-foreground leading-tight
   `,
   
   tableDescription: `

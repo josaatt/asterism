@@ -30,7 +30,7 @@ function TimelineMockup() {
   return (
     <div className={componentStyles.card}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-serif">Tidslinje-visualisering</h3>
+        <h3 className="text-lg">Tidslinje-visualisering</h3>
         <button className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded hover:bg-primary/90 transition-colors">
           + Lägg till händelse
         </button>

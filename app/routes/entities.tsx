@@ -30,7 +30,7 @@ function EntityMapMockup() {
   return (
     <div className={componentStyles.card}>
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-serif">Relationskarta</h3>
+        <h3 className="text-lg">Relationskarta</h3>
         <div className="flex gap-2">
           <button className="px-3 py-1 text-sm border border-border rounded hover:bg-muted transition-colors">
             + Lägg till nod

@@ -108,7 +108,7 @@ export default function Bookmarks() {
           {/* Skapa nytt bokmärke */}
           <section>
             <div className={componentStyles.card}>
-              <h2 className="text-xl font-serif text-foreground mb-4">Lägg till nytt bokmärke</h2>
+              <h2 className="text-xl  text-foreground mb-4">Lägg till nytt bokmärke</h2>
               <Form method="post" className="space-y-4">
                 <input type="hidden" name="intent" value="create" />
                 
@@ -172,7 +172,7 @@ export default function Bookmarks() {
 
           {/* Lista över bokmärken */}
           <section>
-            <h2 className="text-xl font-serif text-foreground mb-6">Sparade bokmärken ({bookmarks.length})</h2>
+            <h2 className="text-xl  text-foreground mb-6">Sparade bokmärken ({bookmarks.length})</h2>
             
             {bookmarks.length > 0 ? (
               <div className="space-y-4">

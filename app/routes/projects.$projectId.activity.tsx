@@ -67,7 +67,7 @@ export default function ProjectActivity() {
     <div className="space-y-8">
       <header className="max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-serif text-foreground">Aktivitetslogg</h2>
+          <h2 className="text-2xl  text-foreground">Aktivitetslogg</h2>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('timeline')}
@@ -110,7 +110,7 @@ export default function ProjectActivity() {
           <div className="space-y-8">
             {Object.entries(groupedLog).map(([date, entries]) => (
               <div key={date}>
-                <h3 className="text-lg font-serif text-foreground mb-4 sticky top-0 bg-background py-2">
+                <h3 className="text-lg  text-foreground mb-4 sticky top-0 bg-background py-2">
                   {formatDate(date)}
                 </h3>
                 <div className={cn(componentStyles.card, "space-y-4")}>
@@ -278,7 +278,7 @@ function ActivityCalendar({
     <div className={cn(componentStyles.card, "p-6")}>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-serif text-foreground">Aktivitetskalender</h3>
+          <h3 className="text-lg  text-foreground">Aktivitetskalender</h3>
           <select
             value={selectedYear}
             onChange={(e) => onYearChange(Number(e.target.value))}

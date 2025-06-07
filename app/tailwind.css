@@ -89,8 +89,8 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Georgia", "Times New Roman", serif;
-    @apply font-normal tracking-tight;
+    font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+    @apply font-medium tracking-tight;
   }
   p, span, div, li, a, button, input, select, textarea {
     font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
@@ -102,11 +102,11 @@
     @apply gap-4;
   }
   .asterisk {
-    @apply text-primary font-serif;
+    @apply text-primary;
     display: inline-block;
   }
   .pull-quote {
-    @apply text-xl md:text-2xl font-serif italic relative pl-8 my-8 max-w-2xl mx-auto;
+    @apply text-xl md:text-2xl italic relative pl-8 my-8 max-w-2xl mx-auto;
     border-left: 3px solid theme('colors.primary.DEFAULT');
     line-height: 1.5;
   }

@@ -38,7 +38,7 @@ function LawChainMockup({
 }) {
   return (
     <div className={componentStyles.card}>
-      <h3 className="text-lg font-serif mb-4">Lagkedje-utforskare</h3>
+      <h3 className="text-lg mb-4">Lagkedje-utforskare</h3>
       
       <div className="space-y-4">
         <div className="flex gap-4">

@@ -310,7 +310,7 @@ function ProjectCardsView({
     <div className="space-y-12">
       {/* Aktiva ärenden */}
       <section>
-        <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
+        <h2 className="text-xl  text-foreground mb-6 flex items-center gap-2">
           <span className="w-3 h-3 bg-green-500 rounded-full"></span>
           Aktiva ärenden ({activeProjects.length})
         </h2>
@@ -328,7 +328,7 @@ function ProjectCardsView({
       {/* Väntande ärenden */}
       {pendingProjects.length > 0 && (
         <section>
-          <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
+          <h2 className="text-xl  text-foreground mb-6 flex items-center gap-2">
             <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
             Väntande ärenden ({pendingProjects.length})
           </h2>
@@ -343,7 +343,7 @@ function ProjectCardsView({
       {/* Arkiverade ärenden */}
       {archivedProjects.length > 0 && (
         <section>
-          <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
+          <h2 className="text-xl  text-foreground mb-6 flex items-center gap-2">
             <span className="w-3 h-3 bg-gray-400 rounded-full"></span>
             Arkiverade ärenden ({archivedProjects.length})
           </h2>
@@ -530,17 +530,7 @@ function ProjectCard({ project }: { project: any }) {
       )}
     >
       <div className="space-y-3">
-        <h3 className="text-lg font-serif font-medium text-foreground">
-          {project.name}
-        </h3>
-        
-        {project.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {project.description}
-          </p>
-        )}
-
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-2">
           {project.caseNumber && (
             <span className={cn(componentStyles.metadataTag, "text-xs")}>
               {project.caseNumber}
@@ -551,6 +541,16 @@ function ProjectCard({ project }: { project: any }) {
              project.priority === 'normal' ? 'normal' : 'ej prioritet'}
           </span>
         </div>
+        
+        <h3 className="text-lg font-medium text-foreground">
+          {project.name}
+        </h3>
+        
+        {project.description && (
+          <p className="text-sm text-muted-foreground line-clamp-2">
+            {project.description}
+          </p>
+        )}
 
         <div className="text-xs text-muted-foreground pt-2">
           Uppdaterad: {new Date(project.updatedAt).toLocaleDateString('sv-SE')}

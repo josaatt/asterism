@@ -221,7 +221,7 @@ export default function ProjectKanban() {
   return (
     <div className="space-y-8">
       <header className="max-w-6xl mx-auto">
-        <h2 className="text-2xl font-serif text-foreground mb-4">Kanban-tavla</h2>
+        <h2 className="text-2xl text-foreground mb-4">Kanban-tavla</h2>
         <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
           <span className={componentStyles.enhancedFirstWord}>Organisera</span>{" "}
           och följ upp projektuppgifter med en visuell Kanban-tavla.

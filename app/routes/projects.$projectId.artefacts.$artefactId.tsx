@@ -135,7 +135,7 @@ export default function ArtefactView() {
                     name="title"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    className="text-3xl font-serif bg-transparent border-b border-border focus:outline-none focus:border-primary w-full"
+                    className="text-3xl  bg-transparent border-b border-border focus:outline-none focus:border-primary w-full"
                   />
                   <div className="flex gap-2">
                     <button
@@ -160,7 +160,7 @@ export default function ArtefactView() {
                 </Form>
               ) : (
                 <>
-                  <h1 className="text-3xl md:text-4xl text-foreground mb-4 font-serif">
+                  <h1 className="text-3xl md:text-4xl text-foreground mb-4 ">
                     {artefact.title}
                   </h1>
                   {canEdit && (
@@ -243,7 +243,7 @@ export default function ArtefactView() {
               ) : (
                 <div>
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-serif">Innehåll</h2>
+                    <h2 className="text-xl ">Innehåll</h2>
                     {canEdit && (
                       <button
                         onClick={() => setIsEditing(true)}
@@ -259,9 +259,9 @@ export default function ArtefactView() {
                       <ReactMarkdown 
                         remarkPlugins={[remarkGfm]}
                         components={{
-                          h1: ({children}) => <h1 className="text-2xl font-serif font-medium text-foreground mb-4">{children}</h1>,
-                          h2: ({children}) => <h2 className="text-xl font-serif font-medium text-foreground mb-3 mt-6">{children}</h2>,
-                          h3: ({children}) => <h3 className="text-lg font-serif font-medium text-foreground mb-2 mt-5">{children}</h3>,
+                          h1: ({children}) => <h1 className="text-2xl  font-medium text-foreground mb-4">{children}</h1>,
+                          h2: ({children}) => <h2 className="text-xl  font-medium text-foreground mb-3 mt-6">{children}</h2>,
+                          h3: ({children}) => <h3 className="text-lg  font-medium text-foreground mb-2 mt-5">{children}</h3>,
                           p: ({children}) => <p className="text-foreground leading-relaxed mb-4">{children}</p>,
                           blockquote: ({children}) => <blockquote className="border-l-3 border-primary pl-4 italic text-foreground/80 my-4">{children}</blockquote>,
                           ul: ({children}) => <ul className="list-disc pl-6 mb-4 space-y-1">{children}</ul>,
@@ -308,7 +308,7 @@ export default function ArtefactView() {
 function TimelineMockup() {
   return (
     <div className={componentStyles.card}>
-      <h3 className="text-lg font-serif mb-4">Tidslinje-visualisering</h3>
+      <h3 className="text-lg  mb-4">Tidslinje-visualisering</h3>
       <div className="space-y-4">
         <div className="text-sm text-muted-foreground mb-4">
           Detta är en mockup av tidslinje-funktionaliteten.
@@ -340,7 +340,7 @@ function TimelineMockup() {
 function EntityMapMockup() {
   return (
     <div className={componentStyles.card}>
-      <h3 className="text-lg font-serif mb-4">Relationskarta</h3>
+      <h3 className="text-lg  mb-4">Relationskarta</h3>
       <div className="text-sm text-muted-foreground mb-4">
         Detta är en mockup av relationskarta-funktionaliteten.
       </div>
@@ -358,7 +358,7 @@ function EntityMapMockup() {
 function LawChainMockup() {
   return (
     <div className={componentStyles.card}>
-      <h3 className="text-lg font-serif mb-4">Lagkedje-utforskare</h3>
+      <h3 className="text-lg  mb-4">Lagkedje-utforskare</h3>
       <div className="text-sm text-muted-foreground mb-4">
         Detta är en mockup av lagkedje-utforskaren.
       </div>

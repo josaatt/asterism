@@ -199,7 +199,7 @@ function ProjectOverview({
         {/* Artefakter översikt */}
         <section>
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-serif text-foreground">Artefakter</h2>
+            <h2 className="text-xl  text-foreground">Artefakter</h2>
             {canEdit && (
               <Link
                 to={`/projects/${project.id}/artefacts/new`}
@@ -258,7 +258,7 @@ function ProjectOverview({
       <div className="space-y-8">
         {/* Projektmedlemmar */}
         <section>
-          <h2 className="text-xl font-serif text-foreground mb-4">Medlemmar</h2>
+          <h2 className="text-xl  text-foreground mb-4">Medlemmar</h2>
           <div className={cn(componentStyles.card, "space-y-3")}>
             {project.memberDetails.map((member: any) => (
               <div key={member.userId} className="flex items-center justify-between">
@@ -281,7 +281,7 @@ function ProjectOverview({
 
         {/* Senaste aktivitet */}
         <section>
-          <h2 className="text-xl font-serif text-foreground mb-4">Senaste aktivitet</h2>
+          <h2 className="text-xl  text-foreground mb-4">Senaste aktivitet</h2>
           <div className={componentStyles.card}>
             {auditLog.length > 0 ? (
               <div className="space-y-3">
