@@ -1,9 +1,11 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
+import { useState, useMemo } from "react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
 import { legalCases } from "~/data/legal-cases";
-
+import ViewToggle from "~/components/comp-108";
+import TableFilters from "~/components/ui/table-filters";
 export const meta: MetaFunction = () => {
   return [
     { title: "Rättspraxis - Asterism" },
@@ -12,6 +14,52 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Rättspraxis() {
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  
+  // Table filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [courtFilter, setCourtFilter] = useState("Alla domstolar");
+  const [legalAreaFilter, setLegalAreaFilter] = useState("Alla rättsområden");
+  const [yearFilter, setYearFilter] = useState("Alla år");
+
+  // Filter legal cases based on current filters
+  const filteredCases = useMemo(() => {
+    return legalCases.filter((legalCase) => {
+      // Search term filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        const matchesSearch = 
+          legalCase.title.toLowerCase().includes(searchLower) ||
+          legalCase.summary.toLowerCase().includes(searchLower) ||
+          legalCase.background.toLowerCase().includes(searchLower) ||
+          legalCase.caseNumber.toLowerCase().includes(searchLower) ||
+          legalCase.keywords.some(keyword => keyword.toLowerCase().includes(searchLower));
+        
+        if (!matchesSearch) return false;
+      }
+
+      // Court filter
+      if (courtFilter !== "Alla domstolar" && legalCase.court !== courtFilter) {
+        return false;
+      }
+
+      // Legal area filter
+      if (legalAreaFilter !== "Alla rättsområden" && legalCase.legalArea !== legalAreaFilter) {
+        return false;
+      }
+
+      // Year filter
+      if (yearFilter !== "Alla år") {
+        const caseYear = legalCase.date.split('-')[0];
+        if (caseYear !== yearFilter) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [searchTerm, courtFilter, legalAreaFilter, yearFilter]);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-16">
@@ -33,71 +81,148 @@ export default function Rättspraxis() {
           </p>
         </header>
 
+        {/* View Toggle Section */}
+        <div className="max-w-6xl mx-auto mb-8">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
+            <p className="text-sm text-muted-foreground">
+              Visar <span className="font-medium">{filteredCases.length}</span> av{' '}
+              <span className="font-medium">{legalCases.length}</span> rättsfall
+            </p>
+          </div>
+        </div>
+
         <main className="max-w-6xl mx-auto">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {legalCases.map((legalCase) => (
-              <article 
-                key={legalCase.id} 
-                className={cn(componentStyles.card, "page-transition")}
-              >
-                <div className="mb-4">
-                  <span className="asterisk text-2xl">*</span>
-                </div>
-                
-                <header className="mb-4">
-                  <div className="mb-2">
-                    <span className={cn(componentStyles.metadataTag, "mr-2")}>
-                      {legalCase.caseNumber}
-                    </span>
-                    <span className={cn(componentStyles.metadataTag, "mr-2")}>
-                      {legalCase.court}
-                    </span>
-                    <span className={componentStyles.metadataTag}>
-                      {legalCase.date}
-                    </span>
+          {viewMode === 'cards' ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filteredCases.map((legalCase) => (
+                <article 
+                  key={legalCase.id} 
+                  className={cn(componentStyles.card, "page-transition")}
+                >
+                  <div className="mb-4">
+                    <span className="asterisk text-2xl">*</span>
                   </div>
-                  <h2 className="text-xl font-serif text-foreground mb-2 leading-tight">
-                    {legalCase.title}
-                  </h2>
-                  <span className={cn(componentStyles.metadataTag, "bg-primary/10 text-primary")}>
-                    {legalCase.legalArea}
-                  </span>
-                </header>
-
-                <div className="space-y-3">
-                  <p className={componentStyles.enhancedParagraph}>
-                    <span className={componentStyles.enhancedFirstWord}>Sammanfattning:</span>{' '}
-                    {legalCase.summary}
-                  </p>
                   
-                  <div>
-                    <h3 className="text-sm font-serif font-medium text-foreground mb-2">
-                      Bakgrund
-                    </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {legalCase.background}
-                    </p>
-                  </div>
+                  <header className="mb-4">
+                    <div className="mb-2">
+                      <span className={cn(componentStyles.metadataTag, "mr-2")}>
+                        {legalCase.caseNumber}
+                      </span>
+                      <span className={cn(componentStyles.metadataTag, "mr-2")}>
+                        {legalCase.court}
+                      </span>
+                      <span className={componentStyles.metadataTag}>
+                        {legalCase.date}
+                      </span>
+                    </div>
+                    <h2 className="text-xl font-serif text-foreground mb-2 leading-tight">
+                      {legalCase.title}
+                    </h2>
+                    <span className={cn(componentStyles.metadataTag, "bg-primary/10 text-primary")}>
+                      {legalCase.legalArea}
+                    </span>
+                  </header>
 
-                  <div>
-                    <h3 className="text-sm font-serif font-medium text-foreground mb-2">
-                      Nyckelord
-                    </h3>
-                    <div className="flex flex-wrap gap-1">
-                      {legalCase.keywords.map((keyword) => (
-                        <span 
-                          key={keyword} 
-                          className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-sm"
-                        >
-                          {keyword}
-                        </span>
-                      ))}
+                  <div className="space-y-3">
+                    <p className={componentStyles.enhancedParagraph}>
+                      <span className={componentStyles.enhancedFirstWord}>Sammanfattning:</span>{' '}
+                      {legalCase.summary}
+                    </p>
+                    
+                    <div>
+                      <h3 className="text-sm font-serif font-medium text-foreground mb-2">
+                        Bakgrund
+                      </h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {legalCase.background}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-serif font-medium text-foreground mb-2">
+                        Nyckelord
+                      </h3>
+                      <div className="flex flex-wrap gap-1">
+                        {legalCase.keywords.map((keyword) => (
+                          <span 
+                            key={keyword} 
+                            className="text-xs px-2 py-1 bg-muted text-muted-foreground rounded-sm"
+                          >
+                            {keyword}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+              <TableFilters
+                searchTerm={searchTerm}
+                onSearchChange={setSearchTerm}
+                courtFilter={courtFilter}
+                onCourtFilterChange={setCourtFilter}
+                legalAreaFilter={legalAreaFilter}
+                onLegalAreaFilterChange={setLegalAreaFilter}
+                yearFilter={yearFilter}
+                onYearFilterChange={setYearFilter}
+              />
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-muted/50 border-b">
+                    <tr>
+                      <th className="text-left p-4 font-serif font-medium text-foreground">Rättsfall</th>
+                      <th className="text-left p-4 font-serif font-medium text-foreground">Domstol</th>
+                      <th className="text-left p-4 font-serif font-medium text-foreground">Datum</th>
+                      <th className="text-left p-4 font-serif font-medium text-foreground">Rättsområde</th>
+                      <th className="text-left p-4 font-serif font-medium text-foreground">Sammanfattning</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredCases.map((legalCase, index) => (
+                      <tr 
+                        key={legalCase.id} 
+                        className={cn(
+                          "border-b transition-colors hover:bg-muted/30",
+                          index % 2 === 0 ? "bg-background" : "bg-muted/10"
+                        )}
+                      >
+                        <td className="p-4">
+                          <div className="space-y-1">
+                            <h3 className="font-serif font-medium text-foreground leading-tight">
+                              {legalCase.title}
+                            </h3>
+                            <span className={cn(componentStyles.metadataTag, "text-xs")}>
+                              {legalCase.caseNumber}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4 text-sm text-muted-foreground">
+                          {legalCase.court}
+                        </td>
+                        <td className="p-4 text-sm text-muted-foreground">
+                          {legalCase.date}
+                        </td>
+                        <td className="p-4">
+                          <span className={cn(componentStyles.metadataTag, "bg-primary/10 text-primary text-xs")}>
+                            {legalCase.legalArea}
+                          </span>
+                        </td>
+                        <td className="p-4 max-w-md">
+                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                            {legalCase.summary}
+                          </p>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           <section className="mt-16 text-center">
             <div className="pull-quote">

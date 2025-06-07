@@ -51,8 +51,13 @@ export default function Index() {
                   index === 0 ? "cursor-pointer" : ""
                 )}
               >
-                <h2 className="text-2xl md:text-3xl mb-3 text-foreground lowercase flex items-start gap-3" style={{ fontFamily: '"La Belle Aurore", cursive' }}>
-                  <span className="text-primary text-lg leading-none translate-y-[-0.2em]">¶</span>
+                <h2
+                  className="text-2xl md:text-3xl mb-3 text-foreground lowercase flex items-start gap-3"
+                  style={{ fontFamily: '"La Belle Aurore", cursive' }}
+                >
+                  <span className="text-primary text-lg leading-none translate-y-[-0.2em]">
+                    ¶
+                  </span>
                   {feature.title}
                 </h2>
                 <p className={componentStyles.enhancedParagraph}>
@@ -87,7 +92,7 @@ export default function Index() {
 
 const features = [
   {
-    title: "Elegant Typography",
+    title: "Rättspraxis",
     description:
       "Sophisticated serif headers combined with clean sans-serif body text create a perfect balance of formality and readability.",
     tags: ["Serif", "Sans-serif", "Readability"],
