@@ -222,15 +222,6 @@ export default function ProjectKanban() {
   return (
     <div className="space-y-8">
       <header className="max-w-6xl mx-auto">
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-          <div className="flex items-center gap-2 text-blue-800">
-            <span className="text-sm font-medium">🎯 Prototyp</span>
-          </div>
-          <p className="text-sm text-blue-700 mt-1">
-            Detta är en mockup av Kanban-funktionaliteten. Data sparas inte permanent.
-          </p>
-        </div>
-        
         <h2 className="text-2xl font-serif text-foreground mb-4">Kanban-tavla</h2>
         <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
           <span className={componentStyles.enhancedFirstWord}>Organisera</span>{" "}

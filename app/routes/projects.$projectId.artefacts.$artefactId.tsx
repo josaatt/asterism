@@ -192,16 +192,6 @@ export default function ArtefactView() {
         </header>
 
         <main>
-          {isMockup && (
-            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-              <div className="flex items-center gap-2 text-blue-800">
-                <span className="text-sm font-medium">🎯 Prototyp</span>
-              </div>
-              <p className="text-sm text-blue-700 mt-1">
-                Detta är en visuell mockup. Funktionaliteten implementeras i framtida versioner.
-              </p>
-            </div>
-          )}
 
           {isTextArtefact && (
             <div className={componentStyles.card}>

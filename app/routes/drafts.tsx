@@ -41,15 +41,6 @@ function LawChainMockup({
     <div className={componentStyles.card}>
       <h3 className="text-lg font-serif mb-4">Lagkedje-utforskare</h3>
       
-      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-        <div className="flex items-center gap-2 text-blue-800">
-          <span className="text-sm font-medium">🎯 Prototyp</span>
-        </div>
-        <p className="text-sm text-blue-700 mt-1">
-          Detta är en mockup av lagkedje-utforskaren. Sökfunktionen visar statiska resultat för demonstration.
-        </p>
-      </div>
-      
       <div className="space-y-4">
         <div className="flex gap-4">
           <input

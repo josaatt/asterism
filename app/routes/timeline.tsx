@@ -20,15 +20,6 @@ export default function Timeline() {
         />
 
         <main className="max-w-6xl mx-auto">
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <div className="flex items-center gap-2 text-blue-800">
-              <span className="text-sm font-medium">🎯 Prototyp</span>
-            </div>
-            <p className="text-sm text-blue-700 mt-1">
-              Detta är en mockup av tidslinje-funktionaliteten. Interaktioner uppdaterar UI:t men data sparas inte permanent.
-            </p>
-          </div>
-
           <TimelineMockup />
         </main>
       </div>

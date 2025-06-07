@@ -20,15 +20,6 @@ export default function Entities() {
         />
 
         <main className="max-w-6xl mx-auto">
-          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
-            <div className="flex items-center gap-2 text-blue-800">
-              <span className="text-sm font-medium">🎯 Prototyp</span>
-            </div>
-            <p className="text-sm text-blue-700 mt-1">
-              Detta är en mockup av relationskarta-funktionaliteten. I den fullständiga versionen kommer detta att vara en interaktiv canvas med React Flow.
-            </p>
-          </div>
-
           <EntityMapMockup />
         </main>
       </div>
