@@ -30,9 +30,11 @@ export default function Index() {
               "max-w-2xl mx-auto text-lg"
             )}
           >
-            <span className={componentStyles.enhancedFirstWord}>Centraliserat</span>{" "}
-            arbetsverktyg för juridisk forskning, dokumentation och projekthantering.
-            Skapat för att förenkla det juridiska arbetet.
+            <span className={componentStyles.enhancedFirstWord}>
+              Centraliserat
+            </span>{" "}
+            arbetsverktyg för juridisk forskning, dokumentation och
+            projekthantering. Skapat för att förenkla det juridiska arbetet.
           </p>
         </header>
 
@@ -76,8 +78,7 @@ export default function Index() {
             Juridisk forskning förenklas genom väldesignade verktyg.
           </div>
           <div className="footnote max-w-md mx-auto">
-            Asterism kombinerar traditionell juridisk arbetsmetodik med moderna
-            verktyg för att skapa en smidig och effektiv arbetsprocess.
+            En fotnot med upphovsrättsinformation.
           </div>
         </section>
       </div>
@@ -95,7 +96,7 @@ const features = [
   },
   {
     title: "rättspraxis",
-    path: "/rättspraxis", 
+    path: "/rättspraxis",
     description:
       "Sök och analysera rättsfall från svenska domstolar med avancerade filtreringsmöjligheter.",
     tags: ["Rättsfall", "Analys", "Sökning"],

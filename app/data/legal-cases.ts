@@ -59,7 +59,7 @@ export const legalCases: LegalCase[] = [
     id: "3",
     caseNumber: "RH 2023:28",
     title: "GDPR-överträdelse och skadestånd",
-    court: "Förvaltningsrätten",
+    court: "Förvaltningsrätten i Stockholm",
     date: "2023-04-18",
     legalArea: "Dataskydd",
     summary: "Första prejudicerande domen om individuell rätt till skadestånd vid GDPR-överträdelser.",
@@ -101,10 +101,10 @@ export const legalCases: LegalCase[] = [
     id: "5",
     caseNumber: "MMD 2023:31",
     title: "Marknadsföring av kryptovalutor",
-    court: "Marknadsdomstolen",
+    court: "Patent- och marknadsdomstolen",
     date: "2023-05-11",
     legalArea: "Marknadsrätt",
-    summary: "Marknadsdomstolen fastställer principer för marknadsföring av kryptovalutor och finansiella risker.",
+    summary: "Patent- och marknadsdomstolen fastställer principer för marknadsföring av kryptovalutor och finansiella risker.",
     background: "En influencer marknadsförde investeringar i kryptovalutor utan att informera om risker eller sin ekonomiska koppling till produkten.",
     decision: [
       "Marknadsföring av kryptovalutor ska följa samma regler som annan finansiell marknadsföring",
@@ -159,5 +159,68 @@ export const legalCases: LegalCase[] = [
       "Alla AI-genererade verk ska tas bort från plattformen"
     ],
     keywords: ["Upphovsrätt", "AI", "Träningsdata", "Immaterialrätt"]
+  },
+  {
+    id: "8",
+    caseNumber: "TR 2023:112",
+    title: "Hyresrätt och bostadsbrist",
+    court: "Stockholms tingsrätt",
+    date: "2023-09-05",
+    legalArea: "Hyresrätt",
+    summary: "Tingsrätten prövar frågan om hyreshöjning med hänsyn till bostadsbrist och marknadshyror.",
+    background: "En hyresvärd begärde betydande hyreshöjning med hänvisning till allmän kostnadsutveckling och jämförbara lägenheter på marknaden.",
+    decision: [
+      "Bostadsbrist kan inte ensamt motivera hyreshöjning utöver bruksvärdet",
+      "Jämförelse ska göras med likartade lägenheter i närområdet",
+      "Hyresgästens ekonomiska situation är inte relevant för bruksvärdesbedömningen"
+    ],
+    ruling: [
+      "Hyreshöjningen begränsas till 8% av tidigare hyra",
+      "Hyresvärdens yrande om 25% höjning avslås till större delen",
+      "Parterna bär sina egna rättegångskostnader"
+    ],
+    keywords: ["Hyresrätt", "Bruksvärde", "Bostadsbrist", "Hyreshöjning"]
+  },
+  {
+    id: "9",
+    caseNumber: "KamR 2023:45",
+    title: "Upphandlingsrättsligt prejudikat",
+    court: "Kammarrätten i Göteborg",
+    date: "2023-10-12",
+    legalArea: "Upphandlingsrätt",
+    summary: "Kammarrätten utvecklar praxis om utvärdering av anbud och jävsproblematik i offentlig upphandling.",
+    background: "En kommun upphandlade IT-tjänster där en anbudsgivare påstods ha otillbörliga kontakter med utvärderingskommittén.",
+    decision: [
+      "Upphandlande myndighet måste säkerställa oberoende i utvärderingsprocessen",
+      "Misstanke om jäv kräver omedelbar utredning och dokumentation",
+      "Transparensprincipen kräver fullständig redovisning av utvärderingsgrunder"
+    ],
+    ruling: [
+      "Upphandlingen ogiltigförklaras",
+      "Kommunen ska genomföra ny upphandling",
+      "Skadestånd om 340 000 kronor till klagande leverantör"
+    ],
+    keywords: ["Upphandlingsrätt", "Jäv", "Transparens", "Offentlig upphandling"]
+  },
+  {
+    id: "10",
+    caseNumber: "MMÖ 2023:18",
+    title: "Vattenrättslig tillståndsgivning",
+    court: "Mark- och miljööverdomstolen",
+    date: "2023-11-20",
+    legalArea: "Miljörätt",
+    summary: "Överdomstolen prövar tillstånd för vattenuttag och påverkan på Natura 2000-område.",
+    background: "Ett industriföretag ansökte om tillstånd för betydande vattenuttag från en sjö som ligger nära ett Natura 2000-område.",
+    decision: [
+      "Vattenuttag kräver särskild prövning när Natura 2000-områden kan påverkas",
+      "Försiktighetsprincipen ska tillämpas vid osäkerhet om miljöpåverkan",
+      "Alternativa vattenkällor måste utredas innan tillstånd kan ges"
+    ],
+    ruling: [
+      "Tillståndsansökan avslås",
+      "Sökanden ska genomföra kompletterande miljökonsekvensbeskrivning",
+      "Ärendet återförvisas till mark- och miljödomstolen för ny prövning"
+    ],
+    keywords: ["Miljörätt", "Vattenrätt", "Natura 2000", "Tillståndsprövning"]
   }
 ];

@@ -34,6 +34,7 @@ import { Dispatch, SetStateAction, useRef, useState, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { AnimatePresence, motion } from "motion/react";
 import { legalCases } from "~/data/legal-cases";
+import { allSwedishCourts, swedishCourts } from "~/data/swedish-courts";
 
 interface AnimateChangeInHeightProps {
   children: React.ReactNode;
@@ -126,6 +127,10 @@ const LegalFilterIcon = ({ type }: { type: LegalFilterType | string }) => {
 
 // Extract unique values from legal cases data
 const getUniqueValues = (field: keyof typeof legalCases[0]) => {
+  if (field === 'court') {
+    // Use comprehensive list of Swedish courts
+    return allSwedishCourts;
+  }
   if (field === 'keywords') {
     // Flatten keywords arrays and get unique values
     const allKeywords = legalCases.flatMap(case_ => case_.keywords);
@@ -167,12 +172,17 @@ export const legalFilterViewOptions: LegalFilterOption[][] = [
   ],
 ];
 
-// Generate filter options from actual data
+// Generate filter options from comprehensive court list with categories
 export const courtFilterOptions: LegalFilterOption[] = getUniqueValues('court').map(
-  (court) => ({
-    name: court,
-    icon: <Building2 className="size-3.5" />,
-  })
+  (court) => {
+    // Find which category this court belongs to for better organization
+    const category = swedishCourts.find(cat => cat.courts.includes(court));
+    return {
+      name: court,
+      icon: <Building2 className="size-3.5" />,
+      label: category?.name
+    };
+  }
 );
 
 export const legalAreaFilterOptions: LegalFilterOption[] = getUniqueValues('legalArea').map(
@@ -288,6 +298,9 @@ const LegalFilterValueCombobox = ({
     (filter) => !filterValues.includes(filter.name)
   );
   
+  // Special handling for court filter to show in three columns
+  const isCourtFilter = filterType === LegalFilterType.COURT;
+  
   return (
     <Popover
       open={open}
@@ -327,7 +340,7 @@ const LegalFilterValueCombobox = ({
             : `${filterValues?.length} valda`}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-0">
+      <PopoverContent className={isCourtFilter ? "w-[800px] p-0" : "w-[250px] p-0"}>
         <AnimateChangeInHeight>
           <Command>
             <CommandInput
@@ -347,10 +360,6 @@ const LegalFilterValueCombobox = ({
                     className="group flex gap-2 items-center data-[selected=true]:text-primary-foreground"
                     onSelect={() => {
                       setFilterValues(filterValues.filter((v) => v !== value));
-                      setTimeout(() => {
-                        setCommandInput("");
-                      }, 200);
-                      setOpen(false);
                     }}
                   >
                     <Checkbox checked={true} />
@@ -362,36 +371,131 @@ const LegalFilterValueCombobox = ({
               {nonSelectedFilterValues?.length > 0 && (
                 <>
                   <CommandSeparator />
-                  <CommandGroup>
-                    {nonSelectedFilterValues.map((filter: LegalFilterOption) => (
-                      <CommandItem
-                        className="group flex gap-2 items-center data-[selected=true]:text-primary-foreground"
-                        key={filter.name}
-                        value={filter.name}
-                        onSelect={(currentValue: string) => {
-                          setFilterValues([...filterValues, currentValue]);
-                          setTimeout(() => {
-                            setCommandInput("");
-                          }, 200);
-                          setOpen(false);
-                        }}
-                      >
-                        <Checkbox
-                          checked={false}
-                          className="opacity-0 group-data-[selected=true]:opacity-100"
-                        />
-                        {filter.icon}
-                        <span className="text-foreground group-data-[selected=true]:text-primary-foreground">
-                          {filter.name}
-                        </span>
-                        {filter.label && (
-                          <span className="text-muted-foreground text-xs ml-auto">
-                            {filter.label}
+                  {isCourtFilter ? (
+                    // Three-column layout for courts - show all courts, not just non-selected
+                    <div className="p-4">
+                      <div className="grid grid-cols-3 gap-6">
+                        {swedishCourts.map((category) => {
+                          // Show ALL courts in this category, both selected and non-selected
+                          const allCategoryOptions = legalFilterViewToFilterOptions[filterType]?.filter(
+                            (filter) => category.courts.includes(filter.name)
+                          ) || [];
+                          
+                          if (allCategoryOptions.length === 0) return null;
+                          
+                          // Sort by court hierarchy: highest courts, then appeal courts, then lower courts, then special courts
+                          const sortedFilters = allCategoryOptions.sort((a, b) => {
+                            const getCourtLevel = (courtName: string) => {
+                              // Highest courts
+                              if (['Högsta domstolen', 'Högsta förvaltningsdomstolen', 'Arbetsdomstolen'].includes(courtName)) {
+                                return 1;
+                              }
+                              // Appeal courts (hovrätter and kammarrätter) and överdomstolar
+                              if (courtName.toLowerCase().includes('hovrätt') || courtName.includes('Kammarrätten') || 
+                                  courtName.includes('överdomstolen')) {
+                                return 2;
+                              }
+                              // Lower courts (tingsrätter and förvaltningsrätter)
+                              if (courtName.includes('tingsrätt') || courtName.includes('Förvaltningsrätten')) {
+                                return 3;
+                              }
+                              // Patent och marknads, mark och miljö, migrations, sjörätts special courts
+                              if (courtName.includes('Patent-') || courtName.includes('Mark-') || 
+                                  courtName.includes('Migrations') || courtName.includes('Sjörätts') ||
+                                  courtName.includes('Försvarsunderrättelse')) {
+                                return 4;
+                              }
+                              // Nämnder and myndigheter
+                              if (courtName.includes('nämnd') || courtName.includes('myndighet')) {
+                                return 5;
+                              }
+                              // All other special courts
+                              return 6;
+                            };
+                            
+                            const aLevel = getCourtLevel(a.name);
+                            const bLevel = getCourtLevel(b.name);
+                            
+                            if (aLevel !== bLevel) {
+                              return aLevel - bLevel;
+                            }
+                            
+                            return a.name.localeCompare(b.name, 'sv');
+                          });
+                          
+                          return (
+                            <div key={category.name} className="space-y-3">
+                              <h4 className="text-xs font-semibold text-foreground border-b border-border pb-1">
+                                {category.name}
+                              </h4>
+                              <div className="space-y-1">
+                                {sortedFilters.map((filter: LegalFilterOption) => {
+                                  const isSelected = filterValues.includes(filter.name);
+                                  
+                                  return (
+                                    <div
+                                      key={filter.name}
+                                      className={`group flex gap-2 items-center p-1 rounded cursor-pointer transition-colors ${
+                                        isSelected 
+                                          ? 'bg-primary/10 hover:bg-primary/20'
+                                          : 'hover:bg-muted/50'
+                                      }`}
+                                      onClick={() => {
+                                        if (isSelected) {
+                                          setFilterValues(filterValues.filter((v) => v !== filter.name));
+                                        } else {
+                                          setFilterValues([...filterValues, filter.name]);
+                                        }
+                                      }}
+                                    >
+                                      <Checkbox
+                                        checked={isSelected}
+                                        className={isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 transition-opacity'}
+                                      />
+                                      {filter.icon}
+                                      <span className={`text-xs leading-tight ${
+                                        isSelected ? 'text-primary font-medium' : 'text-foreground'
+                                      }`}>
+                                        {filter.name}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : (
+                    // Standard single column for other filters
+                    <CommandGroup>
+                      {nonSelectedFilterValues.map((filter: LegalFilterOption) => (
+                        <CommandItem
+                          className="group flex gap-2 items-center data-[selected=true]:text-primary-foreground"
+                          key={filter.name}
+                          value={filter.name}
+                          onSelect={(currentValue: string) => {
+                            setFilterValues([...filterValues, currentValue]);
+                          }}
+                        >
+                          <Checkbox
+                            checked={false}
+                            className="opacity-0 group-data-[selected=true]:opacity-100"
+                          />
+                          {filter.icon}
+                          <span className="text-foreground group-data-[selected=true]:text-primary-foreground">
+                            {filter.name}
                           </span>
-                        )}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
+                          {filter.label && (
+                            <span className="text-muted-foreground text-xs ml-auto">
+                              {filter.label}
+                            </span>
+                          )}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
                 </>
               )}
             </CommandList>

@@ -7,6 +7,8 @@ import { componentStyles } from "~/design-system/components";
 import { getProjectsForUser, currentUser, getUserById } from "~/data/mock-data";
 import { PageHeader } from "~/components/navigation/page-header";
 import ViewToggle from "~/components/comp-108";
+import ProjectFiltersComponent, { type ProjectFilter, ProjectFilterType, FilterOperator } from "~/components/ui/project-filters";
+import AddProjectFilter from "~/components/ui/add-project-filter";
 
 export const meta: MetaFunction = () => {
   return [
@@ -37,8 +39,9 @@ export default function ProjectsIndex() {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Alla status");
+  const [projectFilters, setProjectFilters] = useState<ProjectFilter[]>([]);
 
-  // Filter projects based on search and status
+  // Filter projects based on search, status, and advanced filters
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       // Search term filter
@@ -65,9 +68,60 @@ export default function ProjectsIndex() {
         }
       }
 
+      // Advanced filter logic
+      for (const filter of projectFilters) {
+        if (filter.value.length === 0) continue;
+
+        let matches = false;
+        
+        switch (filter.type) {
+          case ProjectFilterType.STATUS:
+            const statusValue = filter.value[0];
+            if (filter.operator === FilterOperator.IS) {
+              matches = project.status === statusValue;
+            } else if (filter.operator === FilterOperator.IS_NOT) {
+              matches = project.status !== statusValue;
+            }
+            break;
+            
+          case ProjectFilterType.MEMBER_COUNT:
+            const memberCount = project.members.length;
+            const filterCount = parseInt(filter.value[0]);
+            if (filter.operator === FilterOperator.EQUAL_TO) {
+              matches = memberCount === filterCount;
+            } else if (filter.operator === FilterOperator.MORE_THAN) {
+              matches = memberCount > filterCount;
+            } else if (filter.operator === FilterOperator.LESS_THAN) {
+              matches = memberCount < filterCount;
+            }
+            break;
+            
+          case ProjectFilterType.CREATED_YEAR:
+            const projectYear = new Date(project.createdAt).getFullYear().toString();
+            if (filter.operator === FilterOperator.IS) {
+              matches = filter.value.includes(projectYear);
+            } else if (filter.operator === FilterOperator.IS_NOT) {
+              matches = !filter.value.includes(projectYear);
+            }
+            break;
+            
+          case ProjectFilterType.CASE_NUMBER:
+            if (filter.operator === FilterOperator.IS) {
+              matches = filter.value.includes(project.caseNumber || "");
+            } else if (filter.operator === FilterOperator.IS_NOT) {
+              matches = !filter.value.includes(project.caseNumber || "");
+            }
+            break;
+        }
+        
+        if (!matches) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [projects, searchTerm, statusFilter]);
+  }, [projects, searchTerm, statusFilter, projectFilters]);
 
   const activeProjects = filteredProjects.filter(p => p.status === 'active');
   const pendingProjects = filteredProjects.filter(p => p.status === 'pending');
@@ -112,11 +166,26 @@ export default function ProjectsIndex() {
 
         <main className="max-w-6xl mx-auto">
           {viewMode === 'cards' ? (
-            <ProjectCardsView 
-              activeProjects={activeProjects}
-              pendingProjects={pendingProjects}
-              archivedProjects={archivedProjects}
-            />
+            <>
+              {/* Card view filters */}
+              <div className="mb-8">
+                <div className="flex items-center gap-4 mb-4">
+                  <AddProjectFilter 
+                    onAddFilter={(filter) => setProjectFilters(prev => [...prev, filter])}
+                    existingFilters={projectFilters}
+                  />
+                  <ProjectFiltersComponent 
+                    filters={projectFilters}
+                    setFilters={setProjectFilters}
+                  />
+                </div>
+              </div>
+              <ProjectCardsView 
+                activeProjects={activeProjects}
+                pendingProjects={pendingProjects}
+                archivedProjects={archivedProjects}
+              />
+            </>
           ) : (
             <ProjectTableView projects={filteredProjects} />
           )}
