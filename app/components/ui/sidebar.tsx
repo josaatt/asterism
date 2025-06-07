@@ -75,8 +75,8 @@ const staggerVariants = {
 
 
 export function Sidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-  const [isPinned, setIsPinned] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isPinned, setIsPinned] = useState(true);
   const location = useLocation();
   const pathname = location.pathname;
   return (

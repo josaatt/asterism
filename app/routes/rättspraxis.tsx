@@ -1,6 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 import { Link } from "@remix-run/react";
 import { useState, useMemo } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
 import { legalCases } from "~/data/legal-cases";
@@ -30,6 +31,10 @@ export default function Rättspraxis() {
 
   // Advanced filter states (for card view)
   const [legalFilters, setLegalFilters] = useState<LegalFilter[]>([]);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = viewMode === 'cards' ? 10 : 50;
 
   // Filter legal cases based on current filters
   const filteredCases = useMemo(() => {
@@ -125,6 +130,15 @@ export default function Rättspraxis() {
     });
   }, [searchTerm, courtFilter, legalAreaFilter, yearFilter, legalFilters, viewMode]);
 
+  // Reset page when filters change or view mode changes
+  const resetPage = () => setCurrentPage(1);
+  
+  // Pagination calculation
+  const totalPages = Math.ceil(filteredCases.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedCases = filteredCases.slice(startIndex, endIndex);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-16">
@@ -149,10 +163,13 @@ export default function Rättspraxis() {
         {/* View Toggle Section */}
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex items-center justify-between flex-wrap gap-4">
-            <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
+            <ViewToggle viewMode={viewMode} onViewChange={(mode) => {
+              setViewMode(mode);
+              resetPage();
+            }} />
             <p className="text-sm text-muted-foreground">
-              Visar <span className="font-medium">{filteredCases.length}</span> av{' '}
-              <span className="font-medium">{legalCases.length}</span> rättsfall
+              Visar <span className="font-medium">{startIndex + 1}-{Math.min(endIndex, filteredCases.length)}</span> av{' '}
+              <span className="font-medium">{filteredCases.length}</span> rättsfall
             </p>
           </div>
         </div>
@@ -162,12 +179,18 @@ export default function Rättspraxis() {
           <div className="max-w-6xl mx-auto mb-8">
             <div className="flex items-center gap-4 flex-wrap">
               <AddLegalFilter 
-                onAddFilter={(filter) => setLegalFilters(prev => [...prev, filter])}
+                onAddFilter={(filter) => {
+                  setLegalFilters(prev => [...prev, filter]);
+                  resetPage();
+                }}
                 existingFilters={legalFilters}
               />
               <LegalFilters 
                 filters={legalFilters}
-                setFilters={setLegalFilters}
+                setFilters={(filters) => {
+                  setLegalFilters(filters);
+                  resetPage();
+                }}
               />
             </div>
           </div>
@@ -176,7 +199,7 @@ export default function Rättspraxis() {
         <main className="max-w-6xl mx-auto">
           {viewMode === 'cards' ? (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredCases.map((legalCase) => (
+              {paginatedCases.map((legalCase) => (
                 <article 
                   key={legalCase.id} 
                   className={cn(componentStyles.card, "page-transition")}
@@ -243,13 +266,25 @@ export default function Rättspraxis() {
             <div className={componentStyles.tableContainer}>
               <TableFilters
                 searchTerm={searchTerm}
-                onSearchChange={setSearchTerm}
+                onSearchChange={(term) => {
+                  setSearchTerm(term);
+                  resetPage();
+                }}
                 courtFilter={courtFilter}
-                onCourtFilterChange={setCourtFilter}
+                onCourtFilterChange={(filter) => {
+                  setCourtFilter(filter);
+                  resetPage();
+                }}
                 legalAreaFilter={legalAreaFilter}
-                onLegalAreaFilterChange={setLegalAreaFilter}
+                onLegalAreaFilterChange={(filter) => {
+                  setLegalAreaFilter(filter);
+                  resetPage();
+                }}
                 yearFilter={yearFilter}
-                onYearFilterChange={setYearFilter}
+                onYearFilterChange={(filter) => {
+                  setYearFilter(filter);
+                  resetPage();
+                }}
               />
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -263,7 +298,7 @@ export default function Rättspraxis() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredCases.map((legalCase, index) => (
+                    {paginatedCases.map((legalCase, index) => (
                       <tr 
                         key={legalCase.id} 
                         className={cn(
@@ -305,6 +340,15 @@ export default function Rättspraxis() {
             </div>
           )}
 
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
+
           <section className="mt-16 text-center">
             <div className="pull-quote">
               Rättspraxis är grunden för rättssäkerhet och förutsägbarhet i rättstillämpningen.
@@ -316,6 +360,87 @@ export default function Rättspraxis() {
           </section>
         </main>
       </div>
+    </div>
+  );
+}
+
+// Pagination Component
+function Pagination({ currentPage, totalPages, onPageChange }: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  const getVisiblePages = () => {
+    const delta = 2;
+    const range = [];
+    const rangeWithDots = [];
+    
+    for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+      range.push(i);
+    }
+    
+    if (currentPage - delta > 2) {
+      rangeWithDots.push(1, '...');
+    } else {
+      rangeWithDots.push(1);
+    }
+    
+    rangeWithDots.push(...range);
+    
+    if (currentPage + delta < totalPages - 1) {
+      rangeWithDots.push('...', totalPages);
+    } else if (totalPages > 1) {
+      rangeWithDots.push(totalPages);
+    }
+    
+    return rangeWithDots;
+  };
+
+  return (
+    <div className="flex items-center justify-center gap-2 mt-8">
+      <button
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={cn(
+          "p-2 rounded-md border transition-colors",
+          currentPage === 1 
+            ? "bg-muted text-muted-foreground cursor-not-allowed" 
+            : "bg-background hover:bg-muted"
+        )}
+      >
+        <ChevronLeft className="size-4" />
+      </button>
+      
+      {getVisiblePages().map((page, index) => (
+        <button
+          key={index}
+          onClick={() => typeof page === 'number' && onPageChange(page)}
+          disabled={page === '...'}
+          className={cn(
+            "px-3 py-2 rounded-md border transition-colors min-w-[40px]",
+            page === currentPage 
+              ? "bg-primary text-primary-foreground" 
+              : page === '...'
+              ? "bg-background text-muted-foreground cursor-default"
+              : "bg-background hover:bg-muted"
+          )}
+        >
+          {page}
+        </button>
+      ))}
+      
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={cn(
+          "p-2 rounded-md border transition-colors",
+          currentPage === totalPages 
+            ? "bg-muted text-muted-foreground cursor-not-allowed" 
+            : "bg-background hover:bg-muted"
+        )}
+      >
+        <ChevronRight className="size-4" />
+      </button>
     </div>
   );
 }

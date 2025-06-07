@@ -8,7 +8,7 @@ export const componentStyles = {
   
   // Metadata tags pattern
   metadataTag: `
-    text-xs px-2 py-1 bg-muted text-muted-foreground rounded-sm
+    text-xs px-2 py-1 bg-primary/10 text-primary rounded-sm
     transition-colors duration-300 font-normal
   `,
   
@@ -56,7 +56,7 @@ export const componentStyles = {
   `,
   
   tableHeaderCell: `
-    text-left p-4 font-serif font-medium text-foreground
+    text-left p-4 font-medium text-foreground
   `,
   
   tableRow: `

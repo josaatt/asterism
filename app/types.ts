@@ -13,6 +13,9 @@ export type ArtefactType =
 // Status för ett projekt
 export type ProjectStatus = 'active' | 'archived' | 'pending';
 
+// Prioritet för ett projekt
+export type ProjectPriority = 'brådskande' | 'normal' | 'ej_prioritet';
+
 // Behörighetsnivåer inom ett projekt
 export type ProjectPermission = 'owner' | 'editor' | 'commenter' | 'viewer';
 
@@ -40,6 +43,7 @@ export interface Project {
   description?: string;
   caseNumber?: string;
   status: ProjectStatus;
+  priority: ProjectPriority;
   ownerId: string; // userId
   members: { userId: string; permission: ProjectPermission; }[];
   artefacts: string[]; // Lista med artefakt-IDs

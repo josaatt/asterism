@@ -222,5 +222,215 @@ export const legalCases: LegalCase[] = [
       "Ärendet återförvisas till mark- och miljödomstolen för ny prövning"
     ],
     keywords: ["Miljörätt", "Vattenrätt", "Natura 2000", "Tillståndsprövning"]
+  },
+  {
+    id: "11",
+    caseNumber: "NJA 2023:45",
+    title: "Personuppgiftsskydd i arbetslivet",
+    court: "Högsta domstolen",
+    date: "2023-12-15",
+    legalArea: "Dataskydd",
+    summary: "Högsta domstolen klargör gränserna för arbetsgivarens rätt att övervaka anställda genom digitala system.",
+    background: "En arbetsgivare installerade spårningsprogram på tjänstedatorer för att övervaka produktivitet och internetanvändning. Fackföreningen invände mot övervakningen.",
+    decision: [
+      "Övervakning av anställda kräver proportionalitetsavvägning",
+      "Kollektivavtal kan inte åsidosätta GDPR:s grundläggande krav",
+      "Kontinuerlig övervakning kräver särskild motivering och begränsning"
+    ],
+    ruling: [
+      "Övervakningen förbjuds i nuvarande omfattning",
+      "Företaget ska implementera nya rutiner för dataskydd",
+      "Ersättning om 150 000 kronor till berörd personal"
+    ],
+    keywords: ["Dataskydd", "Arbetsrätt", "Övervakning", "GDPR"]
+  },
+  {
+    id: "12",
+    caseNumber: "HFD 2023:62",
+    title: "Mervärdesskatt på digitala tjänster",
+    court: "Högsta förvaltningsdomstolen",
+    date: "2024-01-08",
+    legalArea: "Skatterätt",
+    summary: "HFD fastställer principer för mervärdesskatt på gränsöverskridande digitala tjänster.",
+    background: "Ett svenskt företag tillhandahöll digitala marknadsföringstjänster till kunder i andra EU-länder. Tvisten gällde var mervärdesskatten skulle betalas.",
+    decision: [
+      "Digitala tjänster beskattas där tjänsten konsumeras",
+      "B2B-tjänster följer andra regler än B2C-tjänster",
+      "Företag måste registrera sig i kundens hemland för B2C-försäljning"
+    ],
+    ruling: [
+      "Skatteverkets beslut fastställs",
+      "Företaget ska betala mervärdesskatt i kundens hemland",
+      "Skattetillägg reduceras med hänsyn till regelområdets komplexitet"
+    ],
+    keywords: ["Skatterätt", "Mervärdesskatt", "Digitala tjänster", "EU-rätt"]
+  },
+  {
+    id: "13",
+    caseNumber: "AD 2024:12",
+    title: "Kollektivavtal och gig-ekonomi",
+    court: "Arbetsdomstolen",
+    date: "2024-02-14",
+    legalArea: "Arbetsrätt",
+    summary: "Arbetsdomstolen prövar tillämpningen av kollektivavtal på plattformsarbetare i gig-ekonomin.",
+    background: "Ett fackförbund krävde att kollektivavtal skulle tillämpas på förare som arbetar för en digital plattform. Plattformen hävdade att förarna var egenföretagare.",
+    decision: [
+      "Plattformsarbetare kan omfattas av kollektivavtal beroende på kontrollgraden",
+      "Ekonomiskt beroende är en viktig faktor vid bedömning av anställningsförhållande",
+      "Digitaliseringen förändrar inte grundläggande arbetsrättsliga principer"
+    ],
+    ruling: [
+      "Förarna anses som anställda",
+      "Kollektivavtalet ska tillämpas retroaktivt",
+      "Efterbetalning av löner och sociala avgifter om 2 400 000 kronor"
+    ],
+    keywords: ["Arbetsrätt", "Kollektivavtal", "Gig-ekonomi", "Plattformsarbete"]
+  },
+  {
+    id: "14",
+    caseNumber: "PMD 2024:03",
+    title: "Varumärkesrättsligt skydd för AI-genererade logotyper",
+    court: "Patent- och marknadsdomstolen",
+    date: "2024-03-22",
+    legalArea: "Immaterialrätt",
+    summary: "Patent- och marknadsdomstolen prövar varumärkesskydd för logotyper skapade av artificiell intelligens.",
+    background: "Ett företag ansökte om varumärkesskydd för en logotyp som helt genererats av AI. Patent- och registreringsverket ifrågasatte möjligheten att registrera AI-genererade verk.",
+    decision: [
+      "AI-genererade verk kan erhålla varumärkeskydd om de uppfyller distinctiveness-kravet",
+      "Mänsklig kreativ input är inte ett absolut krav för varumärkesskydd",
+      "Registreringsansökan ska bedömas utifrån slutresultatet, inte skapandeprocessen"
+    ],
+    ruling: [
+      "Varumärket godkänns för registrering",
+      "Patent- och registreringsverkets beslut upphävs",
+      "Rättegångskostnaderna fördelas lika mellan parterna"
+    ],
+    keywords: ["Varumärkesrätt", "AI", "Immaterialrätt", "Logotyp"]
+  },
+  {
+    id: "15",
+    caseNumber: "MÖD 2024:08",
+    title: "Miljötillstånd för vindkraftspark",
+    court: "Mark- och miljööverdomstolen",
+    date: "2024-04-11",
+    legalArea: "Miljörätt",
+    summary: "Överdomstolen prövar miljötillstånd för vindkraftspark och avvägning mellan energiproduktion och naturskydd.",
+    background: "En energibolag ansökte om tillstånd för vindkraftspark i ett område med värdefull fågelfauna. Naturskyddsorganisationer överklagade tillståndbeslutet.",
+    decision: [
+      "Vindkraft har generellt positiv miljöpåverkan men kräver platsspecifik bedömning",
+      "Påverkan på flyttfåglar måste utredas grundligt",
+      "Kompensationsåtgärder kan vara nödvändiga för att tillstånd ska kunna ges"
+    ],
+    ruling: [
+      "Tillståndet godkänns med villkor",
+      "Vindkraftverken ska stängas av under fåglarnas flyttperioder",
+      "Sökanden ska finansiera naturvårdsprojekt om 5 000 000 kronor"
+    ],
+    keywords: ["Miljörätt", "Vindkraft", "Naturskydd", "Tillståndsprövning"]
+  },
+  {
+    id: "16",
+    caseNumber: "HovR 2024:25",
+    title: "Diskriminering i rekryteringsprocess",
+    court: "Göta hovrätt",
+    date: "2024-05-19",
+    legalArea: "Diskrimineringsrätt",
+    summary: "Hovrätten prövar diskriminering baserat på etnisk tillhörighet i anställningsprocess.",
+    background: "En arbetsökande med utländskt namn påstod att hen systematiskt exkluderades från intervjuer trots kvalifikationer. Arbetsgivaren bestred diskriminering.",
+    decision: [
+      "Statistisk underrepresentation kan indikera diskriminering",
+      "Bevisbördan skiftar när prima facie-fall etableras",
+      "Arbetsgivaren måste kunna redovisa objektiva urvalskriterier"
+    ],
+    ruling: [
+      "Diskriminering anses styrkt",
+      "Arbetsgivaren ska betala diskrimineringsersättning om 75 000 kronor",
+      "Företaget ska implementera rutiner för icke-diskriminerande rekrytering"
+    ],
+    keywords: ["Diskrimineringsrätt", "Rekrytering", "Etnisk diskriminering", "Arbetsrätt"]
+  },
+  {
+    id: "17",
+    caseNumber: "TR 2024:201",
+    title: "Konsumentköp av elfordon och reklamationsrätt",
+    court: "Malmö tingsrätt",
+    date: "2024-06-07",
+    legalArea: "Konsumenträtt",
+    summary: "Tingsrätten prövar konsumentens rättigheter vid fel på elfordon och batterikapacitet.",
+    background: "En konsument reklamerade ett elfordon vars batterikapacitet var betydligt lägre än utlovat. Bilhandlaren hävdade att naturlig försämring var orsaken.",
+    decision: [
+      "Batterikapacitet under 80% inom två år anses som fel",
+      "Konsumentköplagen gäller fullt ut för elfordon",
+      "Naturlig förslitning ska bedömas utifrån normal användning"
+    ],
+    ruling: [
+      "Bilen ska bytas ut mot ny med fullt fungerande batteri",
+      "Konsumenten har rätt till ersättning för merkostnader",
+      "Säljaren ska ersätta rättegångskostnaderna"
+    ],
+    keywords: ["Konsumenträtt", "Elfordon", "Reklamation", "Köprätt"]
+  },
+  {
+    id: "18",
+    caseNumber: "FövR 2024:34",
+    title: "Offentlighet och sekretess i digital förvaltning",
+    court: "Förvaltningsrätten i Växjö",
+    date: "2024-07-15",
+    legalArea: "Förvaltningsrätt",
+    summary: "Förvaltningsrätten prövar tillämpningen av offentlighetsprincipen på digital dokumenthantering.",
+    background: "En journalist begärde ut kommunala dokument som fanns i digitalt format. Kommunen hävdade att utlämnande var tekniskt komplicerat och kostnadskrävande.",
+    decision: [
+      "Offentlighetsprincipen gäller oavsett dokumentens digitala format",
+      "Tekniska hinder kan inte motivera vägran att lämna ut allmänna handlingar",
+      "Kommuner måste anpassa sina IT-system för offentlighetsprincipens krav"
+    ],
+    ruling: [
+      "Kommunen ska lämna ut begärda dokument",
+      "Kostnaderna för utlämnande får inte överstiga faktiska kostnader",
+      "Kommunen ska utveckla rutiner för digital handläggning"
+    ],
+    keywords: ["Förvaltningsrätt", "Offentlighetsprincipen", "Digitalisering", "Allmänna handlingar"]
+  },
+  {
+    id: "19",
+    caseNumber: "KamR 2024:17",
+    title: "Bygglov och grannesynpunkter",
+    court: "Kammarrätten i Stockholm",
+    date: "2024-08-03",
+    legalArea: "Byggrätt",
+    summary: "Kammarrätten utvecklar praxis om grannesynpunkter vid bygglovsgivning för flerfamiljshus.",
+    background: "En kommun beviljade bygglov för flerfamiljshus trots kraftiga granneprotester om skuggning och trafikpåverkan. Grannarna överklagade beslutet.",
+    decision: [
+      "Grannesynpunkter ska vägas mot allmänintresset av bostadsbyggande",
+      "Betydande skuggning kan motivera avslag på bygglov",
+      "Kommunens planmonopol begränsar inte grannarnas rättigheter enligt PBL"
+    ],
+    ruling: [
+      "Bygglovet upphävs för den del som skapar betydande skuggning",
+      "Ärendet återförvisas för ny prövning med modifierat projekt",
+      "Kommunen ska ersätta överklagandenas rättegångskostnader"
+    ],
+    keywords: ["Byggrätt", "Bygglov", "Grannesynpunkter", "Plan- och bygglagen"]
+  },
+  {
+    id: "20",
+    caseNumber: "HFD 2024:19",
+    title: "Beskattning av kryptovalutor och mining",
+    court: "Högsta förvaltningsdomstolen",
+    date: "2024-09-12",
+    legalArea: "Skatterätt",
+    summary: "HFD fastställer beskattningsregler för kryptovalutor och cryptocurrency mining.",
+    background: "En privatperson bedrev cryptocurrency mining och sålde genererade tokens. Skatteverket beskattade verksamheten som näringsverksamhet medan personen hävdade hobbyverksamhet.",
+    decision: [
+      "Cryptocurrency mining kan utgöra näringsverksamhet beroende på omfattning",
+      "Kontinuerlig verksamhet med vinstsyfte indikerar näringsverksamhet",
+      "Eltgifter och hårdvarukostnader är avdragsgilla i näringsverksamhet"
+    ],
+    ruling: [
+      "Verksamheten klassas som näringsverksamhet",
+      "Inkomsten ska beskattas som näringsinkomst",
+      "Skattetillägg utgår på grund av rättslägets oklarheter"
+    ],
+    keywords: ["Skatterätt", "Kryptovalutor", "Mining", "Näringsverksamhet"]
   }
 ];

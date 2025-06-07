@@ -2,6 +2,7 @@ import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import { useState, useMemo } from "react";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
 import { getProjectsForUser, currentUser, getUserById } from "~/data/mock-data";
@@ -34,12 +35,16 @@ export async function loader({ request: _request }: LoaderFunctionArgs) {
   return json({ user: _user, projects: projectsWithMembers });
 }
 
+type SortField = 'name' | 'status' | 'priority' | 'caseNumber' | 'members' | 'artefacts' | 'updatedAt';
+type SortDirection = 'asc' | 'desc';
+
 export default function ProjectsIndex() {
   const { user: _user, projects } = useLoaderData<typeof loader>();
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("Alla status");
   const [projectFilters, setProjectFilters] = useState<ProjectFilter[]>([]);
+  const [tableSort, setTableSort] = useState<{ field: SortField; direction: SortDirection }>({ field: 'updatedAt', direction: 'desc' });
 
   // Filter projects based on search, status, and advanced filters
   const filteredProjects = useMemo(() => {
@@ -123,6 +128,58 @@ export default function ProjectsIndex() {
     });
   }, [projects, searchTerm, statusFilter, projectFilters]);
 
+  const handleSort = (field: SortField) => {
+    setTableSort(prev => ({
+      field,
+      direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+    }));
+  };
+
+  const sortProjects = (projectsToSort: any[]) => {
+    return [...projectsToSort].sort((a, b) => {
+      let aVal, bVal;
+      
+      switch (tableSort.field) {
+        case 'name':
+          aVal = a.name;
+          bVal = b.name;
+          break;
+        case 'status':
+          const statusOrder = { 'active': 3, 'pending': 2, 'archived': 1 };
+          aVal = statusOrder[a.status as keyof typeof statusOrder] || 0;
+          bVal = statusOrder[b.status as keyof typeof statusOrder] || 0;
+          break;
+        case 'priority':
+          const priorityOrder = { 'brådskande': 3, 'normal': 2, 'ej_prioritet': 1 };
+          aVal = priorityOrder[a.priority as keyof typeof priorityOrder] || 0;
+          bVal = priorityOrder[b.priority as keyof typeof priorityOrder] || 0;
+          break;
+        case 'caseNumber':
+          aVal = a.caseNumber || '';
+          bVal = b.caseNumber || '';
+          break;
+        case 'members':
+          aVal = a.members.length;
+          bVal = b.members.length;
+          break;
+        case 'artefacts':
+          aVal = a.artefacts?.length || 0;
+          bVal = b.artefacts?.length || 0;
+          break;
+        case 'updatedAt':
+          aVal = new Date(a.updatedAt);
+          bVal = new Date(b.updatedAt);
+          break;
+        default:
+          return 0;
+      }
+      
+      if (aVal < bVal) return tableSort.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return tableSort.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
   const activeProjects = filteredProjects.filter(p => p.status === 'active');
   const pendingProjects = filteredProjects.filter(p => p.status === 'pending');
   const archivedProjects = filteredProjects.filter(p => p.status === 'archived');
@@ -187,7 +244,11 @@ export default function ProjectsIndex() {
               />
             </>
           ) : (
-            <ProjectTableView projects={filteredProjects} />
+            <ProjectTableView 
+              projects={sortProjects(filteredProjects)} 
+              tableSort={tableSort} 
+              onSort={handleSort} 
+            />
           )}
         </main>
       </div>
@@ -297,8 +358,36 @@ function ProjectCardsView({
   );
 }
 
+// Sortable Header Component
+function SortableHeader({ field, label, currentSort, onSort }: {
+  field: SortField;
+  label: string;
+  currentSort: { field: SortField; direction: SortDirection };
+  onSort: (field: SortField) => void;
+}) {
+  return (
+    <th 
+      className={cn(componentStyles.tableHeaderCell, "cursor-pointer hover:bg-muted/30 transition-colors")}
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-2">
+        {label}
+        {currentSort.field === field && (
+          currentSort.direction === 'asc' ? 
+            <ChevronUp className="size-4" /> : 
+            <ChevronDown className="size-4" />
+        )}
+      </div>
+    </th>
+  );
+}
+
 // Table View Component
-function ProjectTableView({ projects }: { projects: any[] }) {
+function ProjectTableView({ projects, tableSort, onSort }: { 
+  projects: any[]; 
+  tableSort: { field: SortField; direction: SortDirection };
+  onSort: (field: SortField) => void;
+}) {
   const getStatusBadge = (status: string) => {
     const badges = {
       active: { label: 'Aktiv', class: 'bg-[#FEE2E2] text-[#991B1B]' },
@@ -313,18 +402,33 @@ function ProjectTableView({ projects }: { projects: any[] }) {
     );
   };
 
+  const getPriorityBadge = (priority: string) => {
+    const badges = {
+      brådskande: { label: 'Brådskande', class: 'bg-[#FEE2E2] text-[#991B1B]' },
+      normal: { label: 'Normal', class: 'bg-[#F3F4F6] text-[#374151]' },
+      ej_prioritet: { label: 'Ej prioritet', class: 'bg-[#FEF3C7] text-[#92400E]' }
+    };
+    const badge = badges[priority as keyof typeof badges] || badges.normal;
+    return (
+      <span className={cn(componentStyles.metadataTag, badge.class)}>
+        {badge.label}
+      </span>
+    );
+  };
+
   return (
     <div className={componentStyles.tableContainer}>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead className={componentStyles.tableHeader}>
             <tr>
-              <th className={componentStyles.tableHeaderCell}>Ärende</th>
-              <th className={componentStyles.tableHeaderCell}>Status</th>
-              <th className={componentStyles.tableHeaderCell}>Ärendenummer</th>
-              <th className={componentStyles.tableHeaderCell}>Medlemmar</th>
-              <th className={componentStyles.tableHeaderCell}>Artefakter</th>
-              <th className={componentStyles.tableHeaderCell}>Uppdaterad</th>
+              <SortableHeader field="name" label="Ärende" currentSort={tableSort} onSort={onSort} />
+              <SortableHeader field="status" label="Status" currentSort={tableSort} onSort={onSort} />
+              <SortableHeader field="priority" label="Prioritet" currentSort={tableSort} onSort={onSort} />
+              <SortableHeader field="caseNumber" label="Ärendenummer" currentSort={tableSort} onSort={onSort} />
+              <SortableHeader field="members" label="Medlemmar" currentSort={tableSort} onSort={onSort} />
+              <SortableHeader field="artefacts" label="Artefakter" currentSort={tableSort} onSort={onSort} />
+              <SortableHeader field="updatedAt" label="Uppdaterad" currentSort={tableSort} onSort={onSort} />
             </tr>
           </thead>
           <tbody>
@@ -352,6 +456,9 @@ function ProjectTableView({ projects }: { projects: any[] }) {
                 </td>
                 <td className={componentStyles.tableCell}>
                   {getStatusBadge(project.status)}
+                </td>
+                <td className={componentStyles.tableCell}>
+                  {getPriorityBadge(project.priority)}
                 </td>
                 <td className={componentStyles.tableCell}>
                   <span className={cn(componentStyles.metadataTag, "text-xs")}>

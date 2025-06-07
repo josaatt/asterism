@@ -130,7 +130,7 @@ function WorkTasksSection() {
     caseNumber: project.caseNumber || `PROJ-${project.id}`,
     title: project.name,
     date: project.updatedAt.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' }),
-    priority: project.status === 'active' ? 'Brådskande' : 'Normal',
+    priority: project.priority === 'brådskande' ? 'Brådskande' : project.priority === 'normal' ? 'Normal' : 'Ej prioritet',
     description: project.description
   }));
   
@@ -152,7 +152,7 @@ function WorkTasksSection() {
         title: project.name,
         caseNumber: project.caseNumber || `PROJ-${project.id}`,
         date: project.updatedAt.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' }),
-        priority: project.status === 'active' ? 'Brådskande' : project.status === 'pending' ? 'Normal' : 'Ej prioritet',
+        priority: project.priority === 'brådskande' ? 'Brådskande' : project.priority === 'normal' ? 'Normal' : 'Ej prioritet',
         assignedTo: owner?.name || 'Okänd',
         group: owner?.group || 'Okänd'
       };
@@ -243,27 +243,59 @@ function WorkTasksSection() {
     <section className="max-w-6xl mx-auto mb-8">
       <div className="grid gap-6 lg:grid-cols-2 h-fit">
         {/* Mina arbetsuppgifter */}
-        <div className={cn(componentStyles.card, "h-fit")}>
-          <div className="flex items-center gap-3 mb-4">
+        <div className="bg-card rounded-lg border shadow-sm overflow-hidden h-fit">
+          <div className="flex items-center gap-3 p-4 border-b">
             <FileText className="size-6 text-primary" />
             <h2 className="text-2xl text-foreground lowercase" style={{ fontFamily: '"La Belle Aurore", cursive' }}>
               mina arbetsuppgifter
             </h2>
           </div>
           
-          {/* Idag */}
-          <div>
-            <h3 className="text-sm font-serif font-medium text-foreground mb-3">idag</h3>
-            <div className="space-y-3">
-              {todayTasks.map((task) => (
-                <TaskItem 
-                  key={task.id} 
-                  task={task} 
-                  isChecked={checkedTasks.has(task.id)}
-                  onToggle={() => toggleTask(task.id)}
-                />
-              ))}
-            </div>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className={cn(componentStyles.tableHeader)}>
+                <tr>
+                  <th className={componentStyles.tableHeaderCell}>uppgift</th>
+                  <th className={componentStyles.tableHeaderCell}>status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {todayTasks.map((task, index) => (
+                  <tr 
+                    key={task.id} 
+                    className={cn(
+                      componentStyles.tableRow,
+                      index % 2 === 0 ? componentStyles.tableRowEven : componentStyles.tableRowOdd
+                    )}
+                  >
+                    <td className={componentStyles.tableCell}>
+                      <div className="space-y-1">
+                        <div className="text-sm font-medium">{task.text}</div>
+                        {task.caseNumber && (
+                          <div>
+                            <span className={cn(componentStyles.metadataTag, "text-xs")}>
+                              {task.caseNumber}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td className={componentStyles.tableCell}>
+                      <button
+                        onClick={() => toggleTask(task.id)}
+                        className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
+                          checkedTasks.has(task.id)
+                            ? 'bg-primary border-primary text-primary-foreground' 
+                            : 'border-border hover:border-primary'
+                        }`}
+                      >
+                        {checkedTasks.has(task.id) && <Check className="size-3" />}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -285,12 +317,6 @@ function WorkTasksSection() {
                     <SortableHeader 
                       field="title" 
                       label="ärende" 
-                      currentSort={myTasksSort} 
-                      onSort={(field) => handleSort(field, false)} 
-                    />
-                    <SortableHeader 
-                      field="date" 
-                      label="datum" 
                       currentSort={myTasksSort} 
                       onSort={(field) => handleSort(field, false)} 
                     />
@@ -321,9 +347,6 @@ function WorkTasksSection() {
                             </span>
                           </div>
                         </div>
-                      </td>
-                      <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
-                        {task.date}
                       </td>
                       <td className={componentStyles.tableCell}>
                         <span className={cn(componentStyles.metadataTag, 
@@ -362,12 +385,6 @@ function WorkTasksSection() {
                       onSort={(field) => handleSort(field, true)} 
                     />
                     <SortableHeader 
-                      field="date" 
-                      label="datum" 
-                      currentSort={groupTasksSort} 
-                      onSort={(field) => handleSort(field, true)} 
-                    />
-                    <SortableHeader 
                       field="priority" 
                       label="prioritering" 
                       currentSort={groupTasksSort} 
@@ -401,9 +418,6 @@ function WorkTasksSection() {
                           </div>
                         </div>
                       </td>
-                      <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
-                        {task.date}
-                      </td>
                       <td className={componentStyles.tableCell}>
                         <span className={cn(componentStyles.metadataTag, 
                           task.priority === 'Brådskande' ? 'bg-[#FEE2E2] text-[#991B1B]' :
@@ -431,34 +445,6 @@ function WorkTasksSection() {
   );
 }
 
-function TaskItem({ task, isChecked, onToggle }: { 
-  task: { id: string; text: string; caseNumber?: string }, 
-  isChecked: boolean, 
-  onToggle: () => void 
-}) {
-  return (
-    <div className="flex items-start gap-3">
-      <button
-        onClick={onToggle}
-        className={`mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center transition-colors ${
-          isChecked 
-            ? 'bg-primary border-primary text-primary-foreground' 
-            : 'border-border hover:border-primary'
-        }`}
-      >
-        {isChecked && <Check className="size-3" />}
-      </button>
-      <div className={`flex-1 ${
-        isChecked ? 'line-through text-muted-foreground' : 'text-foreground'
-      }`}>
-        <div className="text-sm">{task.text}</div>
-        {task.caseNumber && (
-          <div className="text-xs text-muted-foreground mt-1">{task.caseNumber}</div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 
 const features = [

@@ -1,4 +1,4 @@
-import { User, Project, Artefact, AuditLogEntry, Bookmark } from "~/types";
+import { User, Project, Artefact, AuditLogEntry, Bookmark, ProjectPriority } from "~/types";
 
 // Mock-användare för prototypen
 export const mockUsers: User[] = [
@@ -39,6 +39,7 @@ export const mockProjects: Project[] = [
     description: "Utredning av GDPR-compliance för myndigheterna",
     caseNumber: "JUR-2024-001",
     status: "active",
+    priority: "brådskande",
     ownerId: "jurist-1",
     members: [
       { userId: "jurist-1", permission: "owner" },
@@ -54,6 +55,7 @@ export const mockProjects: Project[] = [
     description: "Översyn av miljöbalkens tillämpning",
     caseNumber: "JUR-2024-002",
     status: "active",
+    priority: "normal",
     ownerId: "admin-1",
     members: [
       { userId: "admin-1", permission: "owner" },
@@ -69,6 +71,7 @@ export const mockProjects: Project[] = [
     description: "Analys av avtalsrättsliga frågor för digitala plattformar",
     caseNumber: "JUR-2024-003",
     status: "pending",
+    priority: "brådskande",
     ownerId: "jurist-1",
     members: [
       { userId: "jurist-1", permission: "owner" }
@@ -83,6 +86,7 @@ export const mockProjects: Project[] = [
     description: "Juridisk analys av upphovsrättsfrågor kring AI-genererat innehåll och träningsdata",
     caseNumber: "JUR-2024-004",
     status: "active",
+    priority: "normal",
     ownerId: "jurist-2",
     members: [
       { userId: "jurist-2", permission: "owner" },
@@ -99,6 +103,7 @@ export const mockProjects: Project[] = [
     description: "Utredning av svenska skatteregler för internationella affärstransaktioner",
     caseNumber: "JUR-2024-005",
     status: "active",
+    priority: "ej_prioritet",
     ownerId: "jurist-3",
     members: [
       { userId: "jurist-3", permission: "owner" },
@@ -114,6 +119,7 @@ export const mockProjects: Project[] = [
     description: "Genomgång av arbetstidslagen och kollektivavtals tillämpning vid hemarbete",
     caseNumber: "JUR-2024-006",
     status: "archived",
+    priority: "ej_prioritet",
     ownerId: "admin-1",
     members: [
       { userId: "admin-1", permission: "owner" },
