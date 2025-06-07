@@ -95,7 +95,7 @@ export const mockProjects: Project[] = [
   },
   {
     id: "proj-5",
-    name: "Skatterättslig prövning av gränsöverskridande transaktioner",
+    name: "Skatterätt gränsöverskridande transaktioner",
     description: "Utredning av svenska skatteregler för internationella affärstransaktioner",
     caseNumber: "JUR-2024-005",
     status: "active",

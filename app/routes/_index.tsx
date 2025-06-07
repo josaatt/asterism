@@ -3,7 +3,7 @@ import { Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
 import { useState } from "react";
-import { FileText, Users, Calendar, Clock, ArrowRight, Check, Plus } from "lucide-react";
+import { FileText, Users, Calendar, Clock, ArrowRight, Check, Plus, Briefcase, ChevronUp, ChevronDown } from "lucide-react";
 import { mockProjects, currentUser, getUserById, getGroupMembers } from "~/data/mock-data";
 
 export const meta: MetaFunction = () => {
@@ -92,8 +92,13 @@ export default function Index() {
   );
 }
 
+type SortField = 'title' | 'date' | 'priority' | 'assignedTo';
+type SortDirection = 'asc' | 'desc';
+
 function WorkTasksSection() {
   const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
+  const [myTasksSort, setMyTasksSort] = useState<{ field: SortField; direction: SortDirection }>({ field: 'date', direction: 'desc' });
+  const [groupTasksSort, setGroupTasksSort] = useState<{ field: SortField; direction: SortDirection }>({ field: 'date', direction: 'desc' });
   
   // Get projects where current user is a member
   const userProjects = mockProjects.filter(project => 
@@ -132,20 +137,23 @@ function WorkTasksSection() {
   // Get current user's group members
   const groupMembers = getGroupMembers(currentUser.group);
   
-  // Create group tasks from projects assigned to group members
+  // Create group tasks from projects assigned to group members (excluding current user's own projects)
   const groupTasks = mockProjects
     .filter(project => {
       const owner = getUserById(project.ownerId);
-      return owner && groupMembers.some(member => member.id === owner.id);
+      return owner && 
+        groupMembers.some(member => member.id === owner.id) && 
+        project.ownerId !== currentUser.id; // Exclude current user's own projects
     })
     .map(project => {
       const owner = getUserById(project.ownerId);
       return {
         id: project.id,
+        title: project.name,
         caseNumber: project.caseNumber || `PROJ-${project.id}`,
         date: project.updatedAt.toLocaleDateString('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' }),
         priority: project.status === 'active' ? 'Brådskande' : project.status === 'pending' ? 'Normal' : 'Ej prioritet',
-        assignedTo: project.ownerId === currentUser.id ? 'Jag' : owner?.name || 'Okänd',
+        assignedTo: owner?.name || 'Okänd',
         group: owner?.group || 'Okänd'
       };
     });
@@ -160,6 +168,77 @@ function WorkTasksSection() {
     setCheckedTasks(newChecked);
   };
 
+  const handleSort = (field: SortField, isGroupTasks: boolean = false) => {
+    if (isGroupTasks) {
+      setGroupTasksSort(prev => ({
+        field,
+        direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+      }));
+    } else {
+      setMyTasksSort(prev => ({
+        field,
+        direction: prev.field === field && prev.direction === 'asc' ? 'desc' : 'asc'
+      }));
+    }
+  };
+
+  const sortTasks = (tasks: any[], sortConfig: { field: SortField; direction: SortDirection }) => {
+    return [...tasks].sort((a, b) => {
+      let aVal, bVal;
+      
+      switch (sortConfig.field) {
+        case 'title':
+          aVal = a.title || a.caseNumber;
+          bVal = b.title || b.caseNumber;
+          break;
+        case 'date':
+          aVal = new Date(a.date);
+          bVal = new Date(b.date);
+          break;
+        case 'priority':
+          const priorityOrder = { 'Brådskande': 3, 'Normal': 2, 'Ej prioritet': 1 };
+          aVal = priorityOrder[a.priority as keyof typeof priorityOrder] || 0;
+          bVal = priorityOrder[b.priority as keyof typeof priorityOrder] || 0;
+          break;
+        case 'assignedTo':
+          aVal = a.assignedTo || '';
+          bVal = b.assignedTo || '';
+          break;
+        default:
+          return 0;
+      }
+      
+      if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  // Sort the tasks
+  const sortedMyTasks = sortTasks(myTasks, myTasksSort);
+  const sortedGroupTasks = sortTasks(groupTasks, groupTasksSort);
+
+  const SortableHeader = ({ field, label, currentSort, onSort }: {
+    field: SortField;
+    label: string;
+    currentSort: { field: SortField; direction: SortDirection };
+    onSort: (field: SortField) => void;
+  }) => (
+    <th 
+      className={cn(componentStyles.tableHeaderCell, "cursor-pointer hover:bg-muted/30 transition-colors")}
+      onClick={() => onSort(field)}
+    >
+      <div className="flex items-center gap-2">
+        {label}
+        {currentSort.field === field && (
+          currentSort.direction === 'asc' ? 
+            <ChevronUp className="size-4" /> : 
+            <ChevronDown className="size-4" />
+        )}
+      </div>
+    </th>
+  );
+
   return (
     <section className="max-w-6xl mx-auto mb-8">
       <div className="grid gap-6 lg:grid-cols-2 h-fit">
@@ -173,7 +252,7 @@ function WorkTasksSection() {
           </div>
           
           {/* Idag */}
-          <div className="mb-4">
+          <div>
             <h3 className="text-sm font-serif font-medium text-foreground mb-3">idag</h3>
             <div className="space-y-3">
               {todayTasks.map((task) => (
@@ -186,100 +265,165 @@ function WorkTasksSection() {
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Mina ärenden */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-serif font-medium text-foreground">mina ärenden</h3>
-              <span className={cn(componentStyles.metadataTag, "bg-[#FEE2E2] text-[#991B1B]")}>brådskande</span>
+        {/* Right column with Mina ärenden above Gruppens ärenden */}
+        <div className="space-y-6">
+          {/* Mina ärenden (separate table) */}
+          <div className="bg-card rounded-lg border shadow-sm overflow-hidden h-fit">
+            <div className="flex items-center gap-3 p-4 border-b">
+              <Briefcase className="size-6 text-primary" />
+              <h2 className="text-2xl text-foreground lowercase" style={{ fontFamily: '"La Belle Aurore", cursive' }}>
+                mina ärenden
+              </h2>
             </div>
-            <div className="space-y-3">
-              {myTasks.map((task) => (
-                <div key={task.id} className="p-3 bg-muted/30 rounded border-l-4 border-l-red-500">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">{task.caseNumber} - {task.title}</div>
-                      <div className="text-xs text-muted-foreground mt-1">{task.date}</div>
-                    </div>
-                    <span className={cn(componentStyles.metadataTag, 
-                      task.priority === 'Brådskande' ? 'bg-[#FEE2E2] text-[#991B1B]' : 'bg-[#F3F4F6] text-[#374151]'
-                    )}>
-                      {task.priority.toLowerCase()}
-                    </span>
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                    {task.description}
-                  </div>
-                </div>
-              ))}
+            
+            <div className="overflow-x-auto max-h-80 overflow-y-auto">
+              <table className="w-full">
+                <thead className={cn(componentStyles.tableHeader, "sticky top-0")}>
+                  <tr>
+                    <SortableHeader 
+                      field="title" 
+                      label="ärende" 
+                      currentSort={myTasksSort} 
+                      onSort={(field) => handleSort(field, false)} 
+                    />
+                    <SortableHeader 
+                      field="date" 
+                      label="datum" 
+                      currentSort={myTasksSort} 
+                      onSort={(field) => handleSort(field, false)} 
+                    />
+                    <SortableHeader 
+                      field="priority" 
+                      label="prioritering" 
+                      currentSort={myTasksSort} 
+                      onSort={(field) => handleSort(field, false)} 
+                    />
+                    <th className={componentStyles.tableHeaderCell}></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedMyTasks.map((task, index) => (
+                    <tr 
+                      key={task.id} 
+                      className={cn(
+                        componentStyles.tableRow,
+                        index % 2 === 0 ? componentStyles.tableRowEven : componentStyles.tableRowOdd
+                      )}
+                    >
+                      <td className={componentStyles.tableCell}>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium">{task.title}</div>
+                          <div>
+                            <span className={cn(componentStyles.metadataTag, "text-xs")}>
+                              {task.caseNumber}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
+                        {task.date}
+                      </td>
+                      <td className={componentStyles.tableCell}>
+                        <span className={cn(componentStyles.metadataTag, 
+                          task.priority === 'Brådskande' ? 'bg-[#FEE2E2] text-[#991B1B]' : 'bg-[#F3F4F6] text-[#374151]'
+                        )}>
+                          {task.priority.toLowerCase()}
+                        </span>
+                      </td>
+                      <td className={componentStyles.tableCell}>
+                        <ArrowRight className="size-4 text-muted-foreground" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
-        </div>
-
-        {/* Gruppens ärenden */}
-        <div className="bg-card rounded-lg border shadow-sm overflow-hidden h-fit">
-          <div className="flex items-center gap-3 p-4 border-b">
-            <Users className="size-6 text-primary" />
-            <div>
+          {/* Gruppens ärenden */}
+          <div className="bg-card rounded-lg border shadow-sm overflow-hidden h-fit">
+            <div className="flex items-center gap-3 p-4 border-b">
+              <Users className="size-6 text-primary" />
               <h2 className="text-2xl text-foreground lowercase" style={{ fontFamily: '"La Belle Aurore", cursive' }}>
                 gruppens ärenden
               </h2>
-              <p className="text-sm text-muted-foreground">
-                {currentUser.group} ({groupMembers.length} medlemmar)
-              </p>
             </div>
-          </div>
-          
-          <div className="overflow-x-auto max-h-80 overflow-y-auto">
-            <table className="w-full">
-              <thead className="bg-muted/50 border-b sticky top-0">
-                <tr>
-                  <th className="text-left p-4 font-serif font-medium text-foreground">ärende</th>
-                  <th className="text-left p-4 font-serif font-medium text-foreground">datum</th>
-                  <th className="text-left p-4 font-serif font-medium text-foreground">prioritering</th>
-                  <th className="text-left p-4 font-serif font-medium text-foreground">tilldelad</th>
-                  <th className="text-left p-4 font-serif font-medium text-foreground"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {groupTasks.map((task, index) => (
-                  <tr 
-                    key={task.id} 
-                    className={cn(
-                      "border-b transition-colors hover:bg-muted/30",
-                      index % 2 === 0 ? "bg-background" : "bg-muted/10"
-                    )}
-                  >
-                    <td className="p-4">
-                      <div className="space-y-1">
-                        <span className={cn(componentStyles.metadataTag, "text-xs")}>
-                          {task.caseNumber}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-4 text-sm text-muted-foreground">
-                      {task.date}
-                    </td>
-                    <td className="p-4">
-                      <span className={cn(componentStyles.metadataTag, 
-                        task.priority === 'Brådskande' ? 'bg-[#FEE2E2] text-[#991B1B]' :
-                        task.priority === 'Normal' ? 'bg-[#F3F4F6] text-[#374151]' :
-                        'bg-[#FEF3C7] text-[#92400E]'
-                      )}>
-                        {task.priority.toLowerCase()}
-                      </span>
-                    </td>
-                    <td className="p-4 text-sm text-muted-foreground">
-                      {task.assignedTo}
-                    </td>
-                    <td className="p-4">
-                      <ArrowRight className="size-4 text-muted-foreground" />
-                    </td>
+            
+            <div className="overflow-x-auto max-h-80 overflow-y-auto">
+              <table className="w-full">
+                <thead className={cn(componentStyles.tableHeader, "sticky top-0")}>
+                  <tr>
+                    <SortableHeader 
+                      field="title" 
+                      label="ärende" 
+                      currentSort={groupTasksSort} 
+                      onSort={(field) => handleSort(field, true)} 
+                    />
+                    <SortableHeader 
+                      field="date" 
+                      label="datum" 
+                      currentSort={groupTasksSort} 
+                      onSort={(field) => handleSort(field, true)} 
+                    />
+                    <SortableHeader 
+                      field="priority" 
+                      label="prioritering" 
+                      currentSort={groupTasksSort} 
+                      onSort={(field) => handleSort(field, true)} 
+                    />
+                    <SortableHeader 
+                      field="assignedTo" 
+                      label="tilldelad" 
+                      currentSort={groupTasksSort} 
+                      onSort={(field) => handleSort(field, true)} 
+                    />
+                    <th className={componentStyles.tableHeaderCell}></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {sortedGroupTasks.map((task, index) => (
+                    <tr 
+                      key={task.id} 
+                      className={cn(
+                        componentStyles.tableRow,
+                        index % 2 === 0 ? componentStyles.tableRowEven : componentStyles.tableRowOdd
+                      )}
+                    >
+                      <td className={componentStyles.tableCell}>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium">{task.title}</div>
+                          <div>
+                            <span className={cn(componentStyles.metadataTag, "text-xs")}>
+                              {task.caseNumber}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
+                        {task.date}
+                      </td>
+                      <td className={componentStyles.tableCell}>
+                        <span className={cn(componentStyles.metadataTag, 
+                          task.priority === 'Brådskande' ? 'bg-[#FEE2E2] text-[#991B1B]' :
+                          task.priority === 'Normal' ? 'bg-[#F3F4F6] text-[#374151]' :
+                          'bg-[#FEF3C7] text-[#92400E]'
+                        )}>
+                          {task.priority.toLowerCase()}
+                        </span>
+                      </td>
+                      <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
+                        {task.assignedTo}
+                      </td>
+                      <td className={componentStyles.tableCell}>
+                        <ArrowRight className="size-4 text-muted-foreground" />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -319,11 +463,11 @@ function TaskItem({ task, isChecked, onToggle }: {
 
 const features = [
   {
-    title: "projekt",
+    title: "ärenden",
     path: "/projects",
     description:
-      "Hantera juridiska projekt med strukturerad dokumentation, artefakter och samarbetsverktyg.",
-    tags: ["Projekthantering", "Samarbete", "Dokumentation"],
+      "Hantera juridiska ärenden med strukturerad dokumentation, artefakter och samarbetsverktyg.",
+    tags: ["Ärendehantering", "Samarbete", "Dokumentation"],
   },
   {
     title: "rättspraxis",

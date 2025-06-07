@@ -12,8 +12,8 @@ import AddProjectFilter from "~/components/ui/add-project-filter";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Projekt - Asterism" },
-    { name: "description", content: "Översikt över dina juridiska projekt" },
+    { title: "Ärenden - Asterism" },
+    { name: "description", content: "Översikt över dina juridiska ärenden" },
   ];
 };
 
@@ -131,8 +131,8 @@ export default function ProjectsIndex() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-16">
         <PageHeader 
-          title="mina projekt"
-          description="Översikt över alla dina juridiska projekt och pågående arbeten."
+          title="ärenden"
+          description="Översikt över alla dina juridiska ärenden och pågående arbeten."
         />
         
         {/* View Toggle Section */}
@@ -142,13 +142,13 @@ export default function ProjectsIndex() {
             <div className="flex items-center gap-4">
               <p className="text-sm text-muted-foreground">
                 Visar <span className="font-medium">{filteredProjects.length}</span> av{' '}
-                <span className="font-medium">{projects.length}</span> projekt
+                <span className="font-medium">{projects.length}</span> ärenden
               </p>
               <Link
                 to="/projects/new"
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
               >
-                Nytt projekt
+                Nytt ärende
               </Link>
             </div>
           </div>
@@ -212,7 +212,7 @@ function ProjectFilters({
       <div className="flex-1 min-w-64">
         <input
           type="text"
-          placeholder="Sök projekt..."
+          placeholder="Sök ärenden..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -247,11 +247,11 @@ function ProjectCardsView({
 }) {
   return (
     <div className="space-y-12">
-      {/* Aktiva projekt */}
+      {/* Aktiva ärenden */}
       <section>
         <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
           <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-          Aktiva projekt ({activeProjects.length})
+          Aktiva ärenden ({activeProjects.length})
         </h2>
         {activeProjects.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -260,16 +260,16 @@ function ProjectCardsView({
             ))}
           </div>
         ) : (
-          <div className="text-muted-foreground italic">Inga aktiva projekt för tillfället.</div>
+          <div className="text-muted-foreground italic">Inga aktiva ärenden för tillfället.</div>
         )}
       </section>
 
-      {/* Väntande projekt */}
+      {/* Väntande ärenden */}
       {pendingProjects.length > 0 && (
         <section>
           <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
             <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-            Väntande projekt ({pendingProjects.length})
+            Väntande ärenden ({pendingProjects.length})
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {pendingProjects.map((project) => (
@@ -279,12 +279,12 @@ function ProjectCardsView({
         </section>
       )}
 
-      {/* Arkiverade projekt */}
+      {/* Arkiverade ärenden */}
       {archivedProjects.length > 0 && (
         <section>
           <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
             <span className="w-3 h-3 bg-gray-400 rounded-full"></span>
-            Arkiverade projekt ({archivedProjects.length})
+            Arkiverade ärenden ({archivedProjects.length})
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {archivedProjects.map((project) => (
@@ -314,39 +314,51 @@ function ProjectTableView({ projects }: { projects: any[] }) {
   };
 
   return (
-    <div className={componentStyles.card}>
+    <div className={componentStyles.tableContainer}>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Projekt</th>
-              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Status</th>
-              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Ärendenummer</th>
-              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Medlemmar</th>
-              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Artefakter</th>
-              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Uppdaterad</th>
+          <thead className={componentStyles.tableHeader}>
+            <tr>
+              <th className={componentStyles.tableHeaderCell}>Ärende</th>
+              <th className={componentStyles.tableHeaderCell}>Status</th>
+              <th className={componentStyles.tableHeaderCell}>Ärendenummer</th>
+              <th className={componentStyles.tableHeaderCell}>Medlemmar</th>
+              <th className={componentStyles.tableHeaderCell}>Artefakter</th>
+              <th className={componentStyles.tableHeaderCell}>Uppdaterad</th>
             </tr>
           </thead>
           <tbody>
-            {projects.map((project) => (
-              <tr key={project.id} className="border-b border-border hover:bg-muted/30 transition-colors">
-                <td className="py-3 px-4">
+            {projects.map((project, index) => (
+              <tr 
+                key={project.id} 
+                className={cn(
+                  componentStyles.tableRow,
+                  index % 2 === 0 ? componentStyles.tableRowEven : componentStyles.tableRowOdd
+                )}
+              >
+                <td className={componentStyles.tableCell}>
                   <Link to={`/projects/${project.id}`} className="hover:text-primary transition-colors">
-                    <div className="font-medium">{project.name}</div>
-                    {project.description && (
-                      <div className="text-sm text-muted-foreground truncate max-w-xs">
-                        {project.description}
-                      </div>
-                    )}
+                    <div className="space-y-1">
+                      <h3 className={componentStyles.tableTitle}>
+                        {project.name}
+                      </h3>
+                      {project.description && (
+                        <p className={componentStyles.tableDescription}>
+                          {project.description}
+                        </p>
+                      )}
+                    </div>
                   </Link>
                 </td>
-                <td className="py-3 px-4">
+                <td className={componentStyles.tableCell}>
                   {getStatusBadge(project.status)}
                 </td>
-                <td className="py-3 px-4 text-sm text-muted-foreground">
-                  {project.caseNumber || '-'}
+                <td className={componentStyles.tableCell}>
+                  <span className={cn(componentStyles.metadataTag, "text-xs")}>
+                    {project.caseNumber || '-'}
+                  </span>
                 </td>
-                <td className="py-3 px-4">
+                <td className={componentStyles.tableCell}>
                   <div className="flex -space-x-1">
                     {project.memberDetails.slice(0, 3).map((member: any) => (
                       <div
@@ -364,10 +376,10 @@ function ProjectTableView({ projects }: { projects: any[] }) {
                     )}
                   </div>
                 </td>
-                <td className="py-3 px-4 text-sm text-muted-foreground">
+                <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
                   {project.artefacts?.length || 0}
                 </td>
-                <td className="py-3 px-4 text-sm text-muted-foreground">
+                <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
                   {new Date(project.updatedAt).toLocaleDateString('sv-SE')}
                 </td>
               </tr>
@@ -378,8 +390,8 @@ function ProjectTableView({ projects }: { projects: any[] }) {
         {projects.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             <div className="text-4xl mb-4">📁</div>
-            <h3 className="text-lg font-medium mb-2">Inga projekt hittades</h3>
-            <p>Försök ändra dina sökkriterier eller skapa ett nytt projekt.</p>
+            <h3 className="text-lg font-medium mb-2">Inga ärenden hittades</h3>
+            <p>Försök ändra dina sökkriterier eller skapa ett nytt ärende.</p>
           </div>
         )}
       </div>

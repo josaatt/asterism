@@ -17,8 +17,9 @@ import {
   SortableContext,
   arrayMove,
   verticalListSortingStrategy,
-
-  useSortable} from "@dnd-kit/sortable";
+  useSortable
+} from "@dnd-kit/sortable";
+import { useDroppable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
@@ -270,6 +271,10 @@ function KanbanColumn({
   showNewTaskForm: boolean;
   setShowNewTaskForm: (columnId: string | null) => void;
 }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: column.id,
+  });
+
   return (
     <div className={cn(
       "bg-muted/30 rounded-lg p-4 border-t-4",
@@ -289,9 +294,11 @@ function KanbanColumn({
 
       <SortableContext items={tasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
         <div 
-          className="space-y-3 min-h-[400px]"
-          // Gör hela kolumnen till en drop zone
-          data-column-id={column.id}
+          ref={setNodeRef}
+          className={cn(
+            "space-y-3 min-h-[400px] rounded-md p-2 transition-colors",
+            isOver ? "bg-primary/10" : ""
+          )}
         >
           {tasks.map(task => (
             <TaskCard key={task.id} task={task} />

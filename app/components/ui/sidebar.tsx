@@ -13,6 +13,8 @@ import {
   Settings,
   Clock,
   UserCircle,
+  Pin,
+  PinOff,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "~/components/ui/avatar"
 import { Link, useLocation } from "@remix-run/react";
@@ -74,6 +76,7 @@ const staggerVariants = {
 
 export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isPinned, setIsPinned] = useState(false);
   const location = useLocation();
   const pathname = location.pathname;
   return (
@@ -81,12 +84,12 @@ export function Sidebar() {
       className={cn(
         "sidebar fixed left-0 z-40 h-full shrink-0 border-r fixed",
       )}
-      initial={isCollapsed ? "closed" : "open"}
-      animate={isCollapsed ? "closed" : "open"}
+      initial={isCollapsed && !isPinned ? "closed" : "open"}
+      animate={isCollapsed && !isPinned ? "closed" : "open"}
       variants={sidebarVariants}
       transition={transitionProps}
-      onMouseEnter={() => setIsCollapsed(false)}
-      onMouseLeave={() => setIsCollapsed(true)}
+      onMouseEnter={() => !isPinned && setIsCollapsed(false)}
+      onMouseLeave={() => !isPinned && setIsCollapsed(true)}
     >
       <motion.div
         className={`relative z-40 flex text-muted-foreground h-full shrink-0 flex-col bg-white dark:bg-black transition-all`}
@@ -95,8 +98,8 @@ export function Sidebar() {
         <motion.ul variants={staggerVariants} className="flex h-full flex-col">
           <div className="flex grow flex-col items-center">
             <div className="flex h-[54px] w-full shrink-0 border-b p-2">
-              <div className="mt-[1.5px] flex w-full">
-                <Link to="/" className="flex w-full items-center gap-2 px-2">
+              <div className="mt-[1.5px] flex w-full items-center justify-between">
+                <Link to="/" className="flex items-center gap-2 px-2">
                   <div className="text-primary text-lg" style={{ fontFamily: '"La Belle Aurore", cursive' }}>
                     ⁂
                   </div>
@@ -111,6 +114,25 @@ export function Sidebar() {
                     )}
                   </motion.div>
                 </Link>
+                {!isCollapsed && (
+                  <motion.button
+                    variants={variants}
+                    onClick={() => {
+                      setIsPinned(!isPinned);
+                      if (!isPinned) {
+                        setIsCollapsed(false);
+                      }
+                    }}
+                    className="p-1 rounded-md hover:bg-muted transition-colors"
+                    title={isPinned ? "Avpinna sidebaren" : "Pinna sidebaren"}
+                  >
+                    {isPinned ? (
+                      <PinOff className="h-4 w-4" />
+                    ) : (
+                      <Pin className="h-4 w-4" />
+                    )}
+                  </motion.button>
+                )}
               </div>
             </div>
 
@@ -142,7 +164,7 @@ export function Sidebar() {
                       <FolderOpen className="h-4 w-4" />
                       <motion.li variants={variants}>
                         {!isCollapsed && (
-                          <p className="ml-2 text-sm font-medium">Projekt</p>
+                          <p className="ml-2 text-sm font-medium">Ärenden</p>
                         )}
                       </motion.li>
                     </Link>

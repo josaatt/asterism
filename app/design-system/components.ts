@@ -45,4 +45,45 @@ export const componentStyles = {
   filterSection: `
     text-sm uppercase tracking-wider text-muted-foreground font-medium font-serif
   `,
+
+  // Table styles for consistency
+  tableContainer: `
+    bg-card rounded-lg border shadow-sm overflow-hidden
+  `,
+  
+  tableHeader: `
+    bg-muted/50 border-b
+  `,
+  
+  tableHeaderCell: `
+    text-left p-4 font-serif font-medium text-foreground
+  `,
+  
+  tableRow: `
+    border-b transition-colors hover:bg-muted/50
+  `,
+  
+  tableRowEven: `
+    bg-background
+  `,
+  
+  tableRowOdd: `
+    bg-muted/10
+  `,
+  
+  tableCell: `
+    p-4
+  `,
+  
+  tableCellText: `
+    text-sm text-muted-foreground
+  `,
+  
+  tableTitle: `
+    font-serif font-medium text-foreground leading-tight
+  `,
+  
+  tableDescription: `
+    text-sm text-muted-foreground leading-relaxed line-clamp-2 max-w-md
+  `,
 } as const;

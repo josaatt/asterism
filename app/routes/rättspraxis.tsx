@@ -240,7 +240,7 @@ export default function Rättspraxis() {
               ))}
             </div>
           ) : (
-            <div className="bg-card rounded-lg border shadow-sm overflow-hidden">
+            <div className={componentStyles.tableContainer}>
               <TableFilters
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
@@ -253,13 +253,13 @@ export default function Rättspraxis() {
               />
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-muted/50 border-b">
+                  <thead className={componentStyles.tableHeader}>
                     <tr>
-                      <th className="text-left p-4 font-serif font-medium text-foreground">Rättsfall</th>
-                      <th className="text-left p-4 font-serif font-medium text-foreground">Domstol</th>
-                      <th className="text-left p-4 font-serif font-medium text-foreground">Datum</th>
-                      <th className="text-left p-4 font-serif font-medium text-foreground">Rättsområde</th>
-                      <th className="text-left p-4 font-serif font-medium text-foreground">Sammanfattning</th>
+                      <th className={componentStyles.tableHeaderCell}>Rättsfall</th>
+                      <th className={componentStyles.tableHeaderCell}>Domstol</th>
+                      <th className={componentStyles.tableHeaderCell}>Datum</th>
+                      <th className={componentStyles.tableHeaderCell}>Rättsområde</th>
+                      <th className={componentStyles.tableHeaderCell}>Sammanfattning</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -267,13 +267,13 @@ export default function Rättspraxis() {
                       <tr 
                         key={legalCase.id} 
                         className={cn(
-                          "border-b transition-colors hover:bg-muted/30",
-                          index % 2 === 0 ? "bg-background" : "bg-muted/10"
+                          componentStyles.tableRow,
+                          index % 2 === 0 ? componentStyles.tableRowEven : componentStyles.tableRowOdd
                         )}
                       >
-                        <td className="p-4">
+                        <td className={componentStyles.tableCell}>
                           <div className="space-y-1">
-                            <h3 className="font-serif font-medium text-foreground leading-tight">
+                            <h3 className={componentStyles.tableTitle}>
                               {legalCase.title}
                             </h3>
                             <span className={cn(componentStyles.metadataTag, "text-xs")}>
@@ -281,19 +281,19 @@ export default function Rättspraxis() {
                             </span>
                           </div>
                         </td>
-                        <td className="p-4 text-sm text-muted-foreground">
+                        <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
                           {legalCase.court}
                         </td>
-                        <td className="p-4 text-sm text-muted-foreground">
+                        <td className={cn(componentStyles.tableCell, componentStyles.tableCellText)}>
                           {legalCase.date}
                         </td>
-                        <td className="p-4">
+                        <td className={componentStyles.tableCell}>
                           <span className={cn(componentStyles.metadataTag, "bg-primary/10 text-primary text-xs")}>
                             {legalCase.legalArea}
                           </span>
                         </td>
-                        <td className="p-4 max-w-md">
-                          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
+                        <td className={cn(componentStyles.tableCell, "max-w-md")}>
+                          <p className={cn(componentStyles.tableDescription, "line-clamp-3")}>
                             {legalCase.summary}
                           </p>
                         </td>
