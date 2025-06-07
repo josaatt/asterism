@@ -4,6 +4,7 @@ import { Form, useActionData, useLoaderData, useNavigation } from "@remix-run/re
 import { useState } from "react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
+import { PageHeader } from "~/components/navigation/page-header";
 import { 
   getProjectById, 
   currentUser, 
@@ -142,22 +143,13 @@ export default function NewArtefact() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 
-            className="text-3xl md:text-4xl text-foreground mb-4 lowercase"
-            style={{ fontFamily: '"La Belle Aurore", cursive' }}
-          >
-            <span className="text-primary text-lg leading-none translate-y-[-0.2em] mr-3">¶</span>
-            ny artefakt
-          </h1>
-          <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
-            <span className={componentStyles.enhancedFirstWord}>Skapa</span>{" "}
-            en ny artefakt i projektet "{project.name}".
-          </p>
-        </header>
+      <div className="container mx-auto px-4 py-16">
+        <PageHeader 
+          title="ny artefakt"
+          description={`Skapa en ny artefakt i projektet "${project.name}".`}
+        />
 
-        <main>
+        <main className="max-w-4xl mx-auto">
           <Form method="post" className="space-y-8">
             <div className={cn(componentStyles.card, "space-y-6")}>
               <div>

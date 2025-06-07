@@ -52,7 +52,7 @@ export default function ProjectActivity() {
 
   return (
     <div className="space-y-8">
-      <header>
+      <header className="max-w-6xl mx-auto">
         <h2 className="text-2xl font-serif text-foreground mb-4">Aktivitetslogg</h2>
         <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
           <span className={componentStyles.enhancedFirstWord}>Fullständig</span>{" "}
@@ -60,7 +60,7 @@ export default function ProjectActivity() {
         </p>
       </header>
 
-      <main>
+      <main className="max-w-6xl mx-auto">
         {auditLog.length > 0 ? (
           <div className="space-y-8">
             {Object.entries(groupedLog).map(([date, entries]) => (

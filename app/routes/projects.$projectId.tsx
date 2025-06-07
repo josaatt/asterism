@@ -83,9 +83,20 @@ export default function ProjectView() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-16">
+        {/* Navigering tillbaka till hem */}
+        <div className="text-center mb-8">
+          <Link 
+            to="/" 
+            className="inline-block text-primary hover:text-primary/80 transition-colors"
+            style={{ fontFamily: '"La Belle Aurore", cursive' }}
+          >
+            ← ⁂ asterism
+          </Link>
+        </div>
+        
         {/* Projekt-header */}
-        <header className="mb-8">
+        <header className="mb-8 max-w-6xl mx-auto">
           <div className="flex items-start justify-between mb-4">
             <div>
               <h1 

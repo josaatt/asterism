@@ -4,6 +4,7 @@ import { Form, useLoaderData, useActionData, useNavigation } from "@remix-run/re
 import { useState } from "react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
+import { PageHeader } from "~/components/navigation/page-header";
 import { 
   mockBookmarks, 
   mockProjects,
@@ -97,22 +98,13 @@ export default function Bookmarks() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 
-            className="text-3xl md:text-4xl text-foreground mb-4 lowercase"
-            style={{ fontFamily: '"La Belle Aurore", cursive' }}
-          >
-            <span className="text-primary text-lg leading-none translate-y-[-0.2em] mr-3">¶</span>
-            bokmärken
-          </h1>
-          <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
-            <span className={componentStyles.enhancedFirstWord}>Spara</span>{" "}
-            viktiga juridiska källor och referenser för senare användning.
-          </p>
-        </header>
+      <div className="container mx-auto px-4 py-16">
+        <PageHeader 
+          title="bokmärken"
+          description="Spara viktiga juridiska källor och referenser för senare användning."
+        />
 
-        <main className="space-y-8">
+        <main className="max-w-6xl mx-auto space-y-8">
           {/* Skapa nytt bokmärke */}
           <section>
             <div className={componentStyles.card}>

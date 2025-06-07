@@ -3,8 +3,8 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useNavigation } from "@remix-run/react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
+import { PageHeader } from "~/components/navigation/page-header";
 import { currentUser, mockProjects, mockAuditLog } from "~/data/mock-data";
-import type { CreateProjectData } from "~/types";
 
 export const meta: MetaFunction = () => {
   return [
@@ -75,22 +75,13 @@ export default function NewProject() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        <header className="mb-8">
-          <h1 
-            className="text-3xl md:text-4xl text-foreground mb-4 lowercase"
-            style={{ fontFamily: '"La Belle Aurore", cursive' }}
-          >
-            <span className="text-primary text-lg leading-none translate-y-[-0.2em] mr-3">¶</span>
-            nytt projekt
-          </h1>
-          <p className={cn(componentStyles.enhancedParagraph, "text-lg")}>
-            <span className={componentStyles.enhancedFirstWord}>Skapa</span>{" "}
-            ett nytt juridiskt projekt för att organisera ditt arbete.
-          </p>
-        </header>
+      <div className="container mx-auto px-4 py-16">
+        <PageHeader 
+          title="nytt projekt"
+          description="Skapa ett nytt juridiskt projekt för att organisera ditt arbete."
+        />
 
-        <main>
+        <main className="max-w-2xl mx-auto">
           <Form 
             method="post" 
             className={cn(componentStyles.card, "space-y-6")}

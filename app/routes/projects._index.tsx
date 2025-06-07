@@ -4,7 +4,7 @@ import { useLoaderData, Link } from "@remix-run/react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
 import { getProjectsForUser, currentUser, getUserById } from "~/data/mock-data";
-import type { Project } from "~/types";
+import { PageHeader } from "~/components/navigation/page-header";
 
 export const meta: MetaFunction = () => {
   return [
@@ -39,20 +39,13 @@ export default function ProjectsIndex() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
-          <h1 
-            className="text-3xl md:text-4xl text-foreground mb-4 lowercase"
-            style={{ fontFamily: '"La Belle Aurore", cursive' }}
-          >
-            <span className="text-primary text-lg leading-none translate-y-[-0.2em] mr-3">¶</span>
-            mina projekt
-          </h1>
-          <p className={cn(componentStyles.enhancedParagraph, "text-lg mb-6")}>
-            <span className={componentStyles.enhancedFirstWord}>Översikt</span>{" "}
-            över alla dina juridiska projekt och pågående arbeten.
-          </p>
-          
+      <div className="container mx-auto px-4 py-16">
+        <PageHeader 
+          title="mina projekt"
+          description="Översikt över alla dina juridiska projekt och pågående arbeten."
+        />
+        
+        <div className="max-w-6xl mx-auto mb-8">
           <div className="flex gap-4">
             <Link
               to="/projects/new"
@@ -61,9 +54,9 @@ export default function ProjectsIndex() {
               Nytt projekt
             </Link>
           </div>
-        </header>
+        </div>
 
-        <main className="space-y-12">
+        <main className="max-w-6xl mx-auto space-y-12">
           {/* Aktiva projekt */}
           <section>
             <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">

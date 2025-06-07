@@ -1,6 +1,6 @@
 import type { MetaFunction, LoaderFunctionArgs, ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData, Form, useActionData, useNavigation } from "@remix-run/react";
+import { useLoaderData, Form, useActionData, useNavigation, Link } from "@remix-run/react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -112,8 +112,19 @@ export default function ArtefactView() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <header className="mb-8">
+      <div className="container mx-auto px-4 py-16">
+        {/* Lägg till navigering tillbaka till hem längst upp */}
+        <div className="text-center mb-8">
+          <Link 
+            to="/" 
+            className="inline-block text-primary hover:text-primary/80 transition-colors"
+            style={{ fontFamily: '"La Belle Aurore", cursive' }}
+          >
+            ← ⁂ asterism
+          </Link>
+        </div>
+        
+        <header className="mb-8 max-w-4xl mx-auto">
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               {isEditing ? (
