@@ -5,10 +5,10 @@ import { componentStyles } from "~/design-system/components";
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "Asterism" },
+    { title: "Asterism - Juridiskt Arbetsverktyg" },
     {
       name: "description",
-      content: "Verktyg för jurister",
+      content: "Centraliserat verktyg för juridisk forskning och dokumentation",
     },
   ];
 };
@@ -30,25 +30,21 @@ export default function Index() {
               "max-w-2xl mx-auto text-lg"
             )}
           >
-            <span className={componentStyles.enhancedFirstWord}>Welcome</span>{" "}
-            to a beautifully crafted design system featuring warm, natural
-            tones, elegant typography, and sophisticated interactions.
+            <span className={componentStyles.enhancedFirstWord}>Centraliserat</span>{" "}
+            arbetsverktyg för juridisk forskning, dokumentation och projekthantering.
+            Skapat för att förenkla det juridiska arbetet.
           </p>
         </header>
 
         <main className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
           {features.map((feature, index) => {
-            const CardWrapper = index === 0 ? Link : "div";
-            const cardProps = index === 0 ? { to: "/rättspraxis" } : {};
-
             return (
-              <CardWrapper
-                key={index}
-                {...cardProps}
+              <Link
+                key={feature.path}
+                to={feature.path}
                 className={cn(
                   componentStyles.card,
-                  "page-transition",
-                  index === 0 ? "cursor-pointer" : ""
+                  "page-transition cursor-pointer"
                 )}
               >
                 <h2
@@ -70,19 +66,18 @@ export default function Index() {
                     </span>
                   ))}
                 </div>
-              </CardWrapper>
+              </Link>
             );
           })}
         </main>
 
         <section className="mt-16 text-center">
           <div className="pull-quote">
-            Elegant design speaks louder than words ever could.
+            Juridisk forskning förenklas genom väldesignade verktyg.
           </div>
           <div className="footnote max-w-md mx-auto">
-            This design system combines traditional typography with modern web
-            technologies, creating an experience that is both timeless and
-            contemporary.
+            Asterism kombinerar traditionell juridisk arbetsmetodik med moderna
+            verktyg för att skapa en smidig och effektiv arbetsprocess.
           </div>
         </section>
       </div>
@@ -92,39 +87,45 @@ export default function Index() {
 
 const features = [
   {
-    title: "Rättspraxis",
+    title: "projekt",
+    path: "/projects",
     description:
-      "Sophisticated serif headers combined with clean sans-serif body text create a perfect balance of formality and readability.",
-    tags: ["Serif", "Sans-serif", "Readability"],
+      "Hantera juridiska projekt med strukturerad dokumentation, artefakter och samarbetsverktyg.",
+    tags: ["Projekthantering", "Samarbete", "Dokumentation"],
   },
   {
-    title: "Warm Color Palette",
+    title: "rättspraxis",
+    path: "/rättspraxis", 
     description:
-      "Natural warm gray backgrounds with burgundy accents provide a welcoming and professional atmosphere.",
-    tags: ["Color Theory", "Warm Tones", "Burgundy"],
+      "Sök och analysera rättsfall från svenska domstolar med avancerade filtreringsmöjligheter.",
+    tags: ["Rättsfall", "Analys", "Sökning"],
   },
   {
-    title: "Card-based Layout",
+    title: "utredningar",
+    path: "/drafts",
     description:
-      "Clean white cards with subtle shadows and smooth transitions create an organized and modern interface.",
-    tags: ["Cards", "Shadows", "Layout"],
+      "Skriv och redigera juridiska utredningar med Markdown-stöd och smart länkning.",
+    tags: ["Utredningar", "Markdown", "Redigering"],
   },
   {
-    title: "Interactive Elements",
+    title: "bokmärken",
+    path: "/bookmarks",
     description:
-      "Thoughtful hover effects and smooth animations enhance user experience without overwhelming the content.",
-    tags: ["Interactions", "Animations", "UX"],
+      "Spara och organisera viktiga juridiska källor och referenser för senare användning.",
+    tags: ["Referenser", "Källor", "Organisation"],
   },
   {
-    title: "Responsive Design",
+    title: "tidslinje",
+    path: "/timeline",
     description:
-      "Fluid grid systems and flexible components ensure beautiful presentation across all device sizes.",
-    tags: ["Responsive", "Mobile", "Grid"],
+      "Visualisera kronologiska händelseförlopp och viktiga datum i juridiska ärenden.",
+    tags: ["Visualisering", "Kronologi", "Händelser"],
   },
   {
-    title: "Design System",
+    title: "relationskarta",
+    path: "/entities",
     description:
-      "Comprehensive token-based design system with reusable components for consistent implementation.",
-    tags: ["Tokens", "Components", "Consistency"],
+      "Kartlägg komplexa relationer mellan personer, företag och juridiska entiteter.",
+    tags: ["Relationer", "Visualisering", "Entiteter"],
   },
 ];
