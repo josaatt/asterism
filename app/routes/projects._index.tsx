@@ -1,10 +1,12 @@
 import type { MetaFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
+import { useState, useMemo } from "react";
 import { cn } from "~/lib/utils";
 import { componentStyles } from "~/design-system/components";
 import { getProjectsForUser, currentUser, getUserById } from "~/data/mock-data";
 import { PageHeader } from "~/components/navigation/page-header";
+import ViewToggle from "~/components/comp-108";
 
 export const meta: MetaFunction = () => {
   return [
@@ -32,10 +34,44 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function ProjectsIndex() {
   const { user, projects } = useLoaderData<typeof loader>();
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("Alla status");
 
-  const activeProjects = projects.filter(p => p.status === 'active');
-  const pendingProjects = projects.filter(p => p.status === 'pending');
-  const archivedProjects = projects.filter(p => p.status === 'archived');
+  // Filter projects based on search and status
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      // Search term filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        if (
+          !project.name.toLowerCase().includes(searchLower) &&
+          !project.description?.toLowerCase().includes(searchLower) &&
+          !project.caseNumber?.toLowerCase().includes(searchLower)
+        ) {
+          return false;
+        }
+      }
+
+      // Status filter
+      if (statusFilter !== "Alla status") {
+        const statusMap: Record<string, string> = {
+          "Aktiva": "active",
+          "Väntande": "pending", 
+          "Arkiverade": "archived"
+        };
+        if (project.status !== statusMap[statusFilter]) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [projects, searchTerm, statusFilter]);
+
+  const activeProjects = filteredProjects.filter(p => p.status === 'active');
+  const pendingProjects = filteredProjects.filter(p => p.status === 'pending');
+  const archivedProjects = filteredProjects.filter(p => p.status === 'archived');
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,63 +81,44 @@ export default function ProjectsIndex() {
           description="Översikt över alla dina juridiska projekt och pågående arbeten."
         />
         
+        {/* View Toggle Section */}
         <div className="max-w-6xl mx-auto mb-8">
-          <div className="flex gap-4">
-            <Link
-              to="/projects/new"
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
-            >
-              Nytt projekt
-            </Link>
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+            <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-muted-foreground">
+                Visar <span className="font-medium">{filteredProjects.length}</span> av{' '}
+                <span className="font-medium">{projects.length}</span> projekt
+              </p>
+              <Link
+                to="/projects/new"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+              >
+                Nytt projekt
+              </Link>
+            </div>
           </div>
+          
+          {/* Table filters - only show in table view */}
+          {viewMode === 'table' && (
+            <ProjectFilters 
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
+          )}
         </div>
 
-        <main className="max-w-6xl mx-auto space-y-12">
-          {/* Aktiva projekt */}
-          <section>
-            <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
-              <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-              Aktiva projekt ({activeProjects.length})
-            </h2>
-            {activeProjects.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {activeProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-muted-foreground italic">Inga aktiva projekt för tillfället.</div>
-            )}
-          </section>
-
-          {/* Väntande projekt */}
-          {pendingProjects.length > 0 && (
-            <section>
-              <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
-                <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-                Väntande projekt ({pendingProjects.length})
-              </h2>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {pendingProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Arkiverade projekt */}
-          {archivedProjects.length > 0 && (
-            <section>
-              <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
-                <span className="w-3 h-3 bg-gray-400 rounded-full"></span>
-                Arkiverade projekt ({archivedProjects.length})
-              </h2>
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {archivedProjects.map((project) => (
-                  <ProjectCard key={project.id} project={project} />
-                ))}
-              </div>
-            </section>
+        <main className="max-w-6xl mx-auto">
+          {viewMode === 'cards' ? (
+            <ProjectCardsView 
+              activeProjects={activeProjects}
+              pendingProjects={pendingProjects}
+              archivedProjects={archivedProjects}
+            />
+          ) : (
+            <ProjectTableView projects={filteredProjects} />
           )}
         </main>
       </div>
@@ -109,6 +126,199 @@ export default function ProjectsIndex() {
   );
 }
 
+// Project Filters Component
+function ProjectFilters({ 
+  searchTerm, 
+  setSearchTerm, 
+  statusFilter, 
+  setStatusFilter 
+}: {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  statusFilter: string;
+  setStatusFilter: (status: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-4 p-4 bg-muted/30 rounded-lg border">
+      <div className="flex-1 min-w-64">
+        <input
+          type="text"
+          placeholder="Sök projekt..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        />
+      </div>
+      
+      <div className="flex gap-2">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-3 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+        >
+          <option value="Alla status">Alla status</option>
+          <option value="Aktiva">Aktiva</option>
+          <option value="Väntande">Väntande</option>
+          <option value="Arkiverade">Arkiverade</option>
+        </select>
+      </div>
+    </div>
+  );
+}
+
+// Cards View Component
+function ProjectCardsView({ 
+  activeProjects, 
+  pendingProjects, 
+  archivedProjects 
+}: {
+  activeProjects: any[];
+  pendingProjects: any[];
+  archivedProjects: any[];
+}) {
+  return (
+    <div className="space-y-12">
+      {/* Aktiva projekt */}
+      <section>
+        <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
+          <span className="w-3 h-3 bg-green-500 rounded-full"></span>
+          Aktiva projekt ({activeProjects.length})
+        </h2>
+        {activeProjects.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {activeProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-muted-foreground italic">Inga aktiva projekt för tillfället.</div>
+        )}
+      </section>
+
+      {/* Väntande projekt */}
+      {pendingProjects.length > 0 && (
+        <section>
+          <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
+            <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
+            Väntande projekt ({pendingProjects.length})
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {pendingProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Arkiverade projekt */}
+      {archivedProjects.length > 0 && (
+        <section>
+          <h2 className="text-xl font-serif text-foreground mb-6 flex items-center gap-2">
+            <span className="w-3 h-3 bg-gray-400 rounded-full"></span>
+            Arkiverade projekt ({archivedProjects.length})
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {archivedProjects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+// Table View Component
+function ProjectTableView({ projects }: { projects: any[] }) {
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      active: { label: 'Aktiv', class: 'bg-green-100 text-green-800' },
+      pending: { label: 'Väntande', class: 'bg-yellow-100 text-yellow-800' },
+      archived: { label: 'Arkiverad', class: 'bg-gray-100 text-gray-800' }
+    };
+    const badge = badges[status as keyof typeof badges] || badges.active;
+    return (
+      <span className={cn("px-2 py-1 rounded-full text-xs font-medium", badge.class)}>
+        {badge.label}
+      </span>
+    );
+  };
+
+  return (
+    <div className={componentStyles.card}>
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-border">
+              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Projekt</th>
+              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Status</th>
+              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Ärendenummer</th>
+              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Medlemmar</th>
+              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Artefakter</th>
+              <th className="text-left py-3 px-4 font-medium text-sm text-muted-foreground">Uppdaterad</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map((project) => (
+              <tr key={project.id} className="border-b border-border hover:bg-muted/30 transition-colors">
+                <td className="py-3 px-4">
+                  <Link to={`/projects/${project.id}`} className="hover:text-primary transition-colors">
+                    <div className="font-medium">{project.name}</div>
+                    {project.description && (
+                      <div className="text-sm text-muted-foreground truncate max-w-xs">
+                        {project.description}
+                      </div>
+                    )}
+                  </Link>
+                </td>
+                <td className="py-3 px-4">
+                  {getStatusBadge(project.status)}
+                </td>
+                <td className="py-3 px-4 text-sm text-muted-foreground">
+                  {project.caseNumber || '-'}
+                </td>
+                <td className="py-3 px-4">
+                  <div className="flex -space-x-1">
+                    {project.memberDetails.slice(0, 3).map((member: any) => (
+                      <div
+                        key={member.userId}
+                        className="w-6 h-6 bg-primary/10 border border-background rounded-full flex items-center justify-center text-xs font-medium"
+                        title={member.user?.name}
+                      >
+                        {member.user?.name?.split(' ').map((n: string) => n[0]).join('')}
+                      </div>
+                    ))}
+                    {project.members.length > 3 && (
+                      <div className="w-6 h-6 bg-muted border border-background rounded-full flex items-center justify-center text-xs">
+                        +{project.members.length - 3}
+                      </div>
+                    )}
+                  </div>
+                </td>
+                <td className="py-3 px-4 text-sm text-muted-foreground">
+                  {project.artefacts?.length || 0}
+                </td>
+                <td className="py-3 px-4 text-sm text-muted-foreground">
+                  {new Date(project.updatedAt).toLocaleDateString('sv-SE')}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        
+        {projects.length === 0 && (
+          <div className="text-center py-12 text-muted-foreground">
+            <div className="text-4xl mb-4">📁</div>
+            <h3 className="text-lg font-medium mb-2">Inga projekt hittades</h3>
+            <p>Försök ändra dina sökkriterier eller skapa ett nytt projekt.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Project Card Component (unchanged)
 function ProjectCard({ project }: { project: any }) {
   const statusColors: Record<string, string> = {
     active: 'border-l-green-500',
