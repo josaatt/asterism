@@ -41,15 +41,25 @@ export default function Rättspraxis() {
     return legalCases.filter((legalCase) => {
       // For table view, use simple filters
       if (viewMode === 'table') {
-        // Search term filter
+        // Search term filter - improved search that looks in all text fields
         if (searchTerm) {
           const searchLower = searchTerm.toLowerCase();
-          const matchesSearch = 
-            legalCase.title.toLowerCase().includes(searchLower) ||
-            legalCase.summary.toLowerCase().includes(searchLower) ||
-            legalCase.background.toLowerCase().includes(searchLower) ||
-            legalCase.caseNumber.toLowerCase().includes(searchLower) ||
-            legalCase.keywords.some(keyword => keyword.toLowerCase().includes(searchLower));
+          const searchWords = searchLower.split(' ').filter(word => word.length > 0);
+          
+          const searchableText = [
+            legalCase.title,
+            legalCase.summary,
+            legalCase.background,
+            legalCase.caseNumber,
+            legalCase.court,
+            legalCase.legalArea,
+            legalCase.decision,
+            legalCase.ruling,
+            ...legalCase.keywords
+          ].join(' ').toLowerCase();
+          
+          // Check if all search words are found in the searchable text
+          const matchesSearch = searchWords.every(word => searchableText.includes(word));
           
           if (!matchesSearch) return false;
         }
@@ -79,15 +89,22 @@ export default function Rättspraxis() {
           const filterPassed = (() => {
             switch (filter.type) {
               case LegalFilterType.COURT:
-                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                if (filter.operator === FilterOperator.IS) {
+                  // All values must match (only makes sense with one value)
+                  return filter.value.includes(legalCase.court);
+                } else if (filter.operator === FilterOperator.IS_ANY_OF) {
+                  // At least one value must match
                   return filter.value.includes(legalCase.court);
                 } else if (filter.operator === FilterOperator.IS_NOT) {
+                  // None of the values should match
                   return !filter.value.includes(legalCase.court);
                 }
                 break;
               
               case LegalFilterType.LEGAL_AREA:
-                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                if (filter.operator === FilterOperator.IS) {
+                  return filter.value.includes(legalCase.legalArea);
+                } else if (filter.operator === FilterOperator.IS_ANY_OF) {
                   return filter.value.includes(legalCase.legalArea);
                 } else if (filter.operator === FilterOperator.IS_NOT) {
                   return !filter.value.includes(legalCase.legalArea);
@@ -96,7 +113,9 @@ export default function Rättspraxis() {
               
               case LegalFilterType.YEAR:
                 const caseYear = legalCase.date.split('-')[0];
-                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                if (filter.operator === FilterOperator.IS) {
+                  return filter.value.includes(caseYear);
+                } else if (filter.operator === FilterOperator.IS_ANY_OF) {
                   return filter.value.includes(caseYear);
                 } else if (filter.operator === FilterOperator.IS_NOT) {
                   return !filter.value.includes(caseYear);
@@ -104,7 +123,9 @@ export default function Rättspraxis() {
                 break;
               
               case LegalFilterType.CASE_NUMBER:
-                if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+                if (filter.operator === FilterOperator.IS) {
+                  return filter.value.includes(legalCase.caseNumber);
+                } else if (filter.operator === FilterOperator.IS_ANY_OF) {
                   return filter.value.includes(legalCase.caseNumber);
                 } else if (filter.operator === FilterOperator.IS_NOT) {
                   return !filter.value.includes(legalCase.caseNumber);
@@ -112,10 +133,18 @@ export default function Rättspraxis() {
                 break;
               
               case LegalFilterType.KEYWORDS:
-                if (filter.operator === FilterOperator.INCLUDE || filter.operator === FilterOperator.INCLUDE_ANY_OF) {
+                if (filter.operator === FilterOperator.INCLUDE) {
+                  // All keywords must be present
+                  return filter.value.every(keyword => legalCase.keywords.includes(keyword));
+                } else if (filter.operator === FilterOperator.INCLUDE_ANY_OF) {
+                  // At least one keyword must be present
                   return filter.value.some(keyword => legalCase.keywords.includes(keyword));
-                } else if (filter.operator === FilterOperator.DO_NOT_INCLUDE || filter.operator === FilterOperator.EXCLUDE_ALL_OF) {
+                } else if (filter.operator === FilterOperator.DO_NOT_INCLUDE) {
+                  // None of the keywords should be present
                   return !filter.value.some(keyword => legalCase.keywords.includes(keyword));
+                } else if (filter.operator === FilterOperator.EXCLUDE_ALL_OF) {
+                  // All keywords must be absent
+                  return !filter.value.every(keyword => legalCase.keywords.includes(keyword));
                 }
                 break;
             }

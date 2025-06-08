@@ -34,7 +34,7 @@ import {
 import { Dispatch, SetStateAction, useRef, useState, useEffect } from "react";
 import { Button } from "~/components/ui/button";
 import { AnimatePresence, motion } from "motion/react";
-import { mockProjects } from "~/data/mock-data";
+import { mockProjects, mockUsers } from "~/data/mock-data";
 
 interface AnimateChangeInHeightProps {
   children: React.ReactNode;
@@ -77,7 +77,7 @@ export const AnimateChangeInHeight: React.FC<AnimateChangeInHeightProps> = ({
 
 export enum ProjectFilterType {
   STATUS = "Status",
-  MEMBER_COUNT = "Medlemmar",
+  MEMBERS = "Användare",
   CREATED_YEAR = "Skapad år",
   CASE_NUMBER = "Målnummer",
 }
@@ -110,7 +110,7 @@ const ProjectFilterIcon = ({ type }: { type: ProjectFilterType | string }) => {
   switch (type) {
     case ProjectFilterType.STATUS:
       return <Circle className="size-3.5" />;
-    case ProjectFilterType.MEMBER_COUNT:
+    case ProjectFilterType.MEMBERS:
       return <Users className="size-3.5" />;
     case ProjectFilterType.CREATED_YEAR:
       return <Calendar className="size-3.5" />;
@@ -125,6 +125,16 @@ const ProjectFilterIcon = ({ type }: { type: ProjectFilterType | string }) => {
     case "cancelled":
       return <CircleX className="size-3.5 text-red-500" />;
     default:
+      // Check if it's a user ID
+      const user = mockUsers.find(u => u.id === type);
+      if (user) {
+        const initials = user.name.split(' ').map(n => n[0]).join('');
+        return (
+          <div className="w-3.5 h-3.5 bg-primary/10 rounded-full flex items-center justify-center text-[8px] font-medium">
+            {initials}
+          </div>
+        );
+      }
       return <FolderOpen className="size-3.5" />;
   }
 };
@@ -138,8 +148,15 @@ const getUniqueProjectValues = (field: string) => {
     const years = mockProjects.map(project => project.createdAt.getFullYear().toString());
     return [...new Set(years)].sort().reverse();
   }
-  if (field === 'memberCount') {
-    return ['1', '2', '3', '4', '5+'];
+  if (field === 'members') {
+    // Get all unique user IDs from all projects
+    const allUserIds = new Set<string>();
+    mockProjects.forEach(project => {
+      project.members.forEach(member => {
+        allUserIds.add(member.userId);
+      });
+    });
+    return Array.from(allUserIds);
   }
   if (field === 'caseNumber') {
     const caseNumbers = mockProjects.map(project => project.caseNumber).filter(Boolean);
@@ -155,8 +172,8 @@ export const projectFilterViewOptions: ProjectFilterOption[][] = [
       icon: <ProjectFilterIcon type={ProjectFilterType.STATUS} />,
     },
     {
-      name: ProjectFilterType.MEMBER_COUNT,
-      icon: <ProjectFilterIcon type={ProjectFilterType.MEMBER_COUNT} />,
+      name: ProjectFilterType.MEMBERS,
+      icon: <ProjectFilterIcon type={ProjectFilterType.MEMBERS} />,
     },
   ],
   [
@@ -181,12 +198,15 @@ export const statusFilterOptions: ProjectFilterOption[] = getUniqueProjectValues
   })
 );
 
-export const memberCountFilterOptions: ProjectFilterOption[] = getUniqueProjectValues('memberCount').map(
-  (count) => ({
-    name: count || '',
-    icon: <Users className="size-3.5" />,
-    label: count === '5+' ? '5 eller fler' : `${count} medlem${count === '1' ? '' : 'mar'}`
-  })
+export const membersFilterOptions: ProjectFilterOption[] = getUniqueProjectValues('members').map(
+  (userId) => {
+    const user = mockUsers.find(u => u.id === userId);
+    return {
+      name: userId || '',
+      icon: <Users className="size-3.5" />,
+      label: user?.name || userId
+    };
+  }
 );
 
 export const createdYearFilterOptions: ProjectFilterOption[] = getUniqueProjectValues('createdYear').map(
@@ -205,7 +225,7 @@ export const caseNumberFilterOptions: ProjectFilterOption[] = getUniqueProjectVa
 
 export const projectFilterViewToFilterOptions: Record<ProjectFilterType, ProjectFilterOption[]> = {
   [ProjectFilterType.STATUS]: statusFilterOptions,
-  [ProjectFilterType.MEMBER_COUNT]: memberCountFilterOptions,
+  [ProjectFilterType.MEMBERS]: membersFilterOptions,
   [ProjectFilterType.CREATED_YEAR]: createdYearFilterOptions,
   [ProjectFilterType.CASE_NUMBER]: caseNumberFilterOptions,
 };
@@ -226,8 +246,12 @@ const projectFilterOperators = ({
       } else {
         return [FilterOperator.IS, FilterOperator.IS_NOT];
       }
-    case ProjectFilterType.MEMBER_COUNT:
-      return [FilterOperator.EQUAL_TO, FilterOperator.MORE_THAN, FilterOperator.LESS_THAN];
+    case ProjectFilterType.MEMBERS:
+      if (Array.isArray(filterValues) && filterValues.length > 1) {
+        return [FilterOperator.IS_ANY_OF, FilterOperator.IS_NOT];
+      } else {
+        return [FilterOperator.IS, FilterOperator.IS_NOT];
+      }
     default:
       return [];
   }
@@ -314,11 +338,13 @@ const ProjectFilterValueCombobox = ({
           {filterValues?.length === 0
             ? `Välj ${filterType.toLowerCase()}...`
             : filterValues?.length === 1
-            ? filterValues?.[0]
+            ? (filterType === ProjectFilterType.MEMBERS 
+                ? mockUsers.find(u => u.id === filterValues[0])?.name || filterValues[0]
+                : filterValues?.[0])
             : `${filterValues?.length} valda`}
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-[250px] p-0">
+      <PopoverContent className="w-[250px] p-0" align="start" sideOffset={4}>
         <AnimateChangeInHeight>
           <Command>
             <CommandInput
@@ -346,7 +372,11 @@ const ProjectFilterValueCombobox = ({
                   >
                     <Checkbox checked={true} />
                     <ProjectFilterIcon type={value} />
-                    <span className="text-foreground group-data-[selected=true]:text-primary-foreground">{value}</span>
+                    <span className="text-foreground group-data-[selected=true]:text-primary-foreground">
+                      {filterType === ProjectFilterType.MEMBERS 
+                        ? mockUsers.find(u => u.id === value)?.name || value
+                        : value}
+                    </span>
                   </CommandItem>
                 ))}
               </CommandGroup>

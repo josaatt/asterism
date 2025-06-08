@@ -31,11 +31,15 @@ export default function AddLegalFilter({ onAddFilter, existingFilters }: AddLega
   const [commandInput, setCommandInput] = useState("");
 
   const handleAddFilter = (filterType: LegalFilterType) => {
-    // Allow multiple filters of the same type
+    // Set appropriate default operator based on filter type
+    const defaultOperator = filterType === LegalFilterType.KEYWORDS 
+      ? FilterOperator.INCLUDE 
+      : FilterOperator.IS;
+      
     const newFilter: LegalFilter = {
       id: `filter-${Date.now()}`,
       type: filterType,
-      operator: FilterOperator.IS,
+      operator: defaultOperator,
       value: [],
     };
 

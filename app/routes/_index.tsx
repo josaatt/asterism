@@ -396,88 +396,125 @@ function WorkTasksSection() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <tbody>
-                {getVisibleTasks().map((task, index) => {
-                  const visibleTasks = getVisibleTasks();
-                  const showDaySeparator =
-                    taskView !== "idag" && index === todayTasks.length;
-                  const showWeekSeparator =
-                    taskView === "kommande" &&
-                    index === todayTasks.length + weekTasks.length;
+                {taskView === "idag" && (
+                  <tr>
+                    <td className="pt-2 pb-2">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 border-t border-border"></div>
+                        <span className="text-xs font-medium text-muted-foreground tracking-wider">
+                          idag
+                        </span>
+                        <div className="flex-1 border-t border-border"></div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                {getVisibleTasks().length === 0 ? (
+                  <tr>
+                    <td className={cn(componentStyles.tableCell, "text-center py-8")}>
+                      <div className="text-muted-foreground">
+                        <Sun className="size-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">Inga arbetsuppgifter för {taskView}</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  getVisibleTasks().map((task, index) => {
+                    const visibleTasks = getVisibleTasks();
+                    const showDaySeparator =
+                      taskView !== "idag" && index === todayTasks.length;
+                    const showWeekSeparator =
+                      taskView === "kommande" &&
+                      index === todayTasks.length + weekTasks.length;
 
-                  return (
-                    <>
-                      {showDaySeparator && (
-                        <tr>
-                          <td className="pt-4 pb-2">
-                            <div className="flex items-center gap-3">
-                              <div className="flex-1 border-t border-border"></div>
-                              <span className="text-xs font-medium text-muted-foreground tracking-wider">
-                                denna vecka
-                              </span>
-                              <div className="flex-1 border-t border-border"></div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                      {showWeekSeparator && (
-                        <tr>
-                          <td className="pt-4 pb-2">
-                            <div className="flex items-center gap-3">
-                              <div className="flex-1 border-t border-border"></div>
-                              <span className="text-xs font-medium text-muted-foreground tracking-wider">
-                                kommande
-                              </span>
-                              <div className="flex-1 border-t border-border"></div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                      <tr
-                        key={task.id}
-                        className={cn(
-                          componentStyles.tableRow,
-                          index % 2 === 0
-                            ? componentStyles.tableRowEven
-                            : componentStyles.tableRowOdd
-                        )}
-                      >
-                        <td className={componentStyles.tableCell}>
-                          <div className="flex items-center gap-3">
-                            <button
-                              onClick={() => toggleTask(task.id)}
-                              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
-                                checkedTasks.has(task.id)
-                                  ? "bg-primary border-primary text-primary-foreground"
-                                  : "border-border hover:border-primary"
-                              }`}
-                            >
-                              {checkedTasks.has(task.id) && (
-                                <Check className="size-3" />
-                              )}
-                            </button>
-                            <div className="space-y-1">
-                              <div className="text-sm font-medium">
-                                {task.text}
+                    return (
+                      <>
+                        {index === 0 && taskView !== "idag" && (
+                          <tr>
+                            <td className="pt-2 pb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="flex-1 border-t border-border"></div>
+                                <span className="text-xs font-medium text-muted-foreground tracking-wider">
+                                  idag
+                                </span>
+                                <div className="flex-1 border-t border-border"></div>
                               </div>
-                              {task.caseNumber && (
-                                <div>
-                                  <span
-                                    className={cn(
-                                      componentStyles.metadataTag,
-                                      "text-xs"
-                                    )}
-                                  >
-                                    {task.caseNumber}
-                                  </span>
+                            </td>
+                          </tr>
+                        )}
+                        {showDaySeparator && (
+                          <tr>
+                            <td className="pt-4 pb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="flex-1 border-t border-border"></div>
+                                <span className="text-xs font-medium text-muted-foreground tracking-wider">
+                                  denna vecka
+                                </span>
+                                <div className="flex-1 border-t border-border"></div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        {showWeekSeparator && (
+                          <tr>
+                            <td className="pt-4 pb-2">
+                              <div className="flex items-center gap-3">
+                                <div className="flex-1 border-t border-border"></div>
+                                <span className="text-xs font-medium text-muted-foreground tracking-wider">
+                                  kommande
+                                </span>
+                                <div className="flex-1 border-t border-border"></div>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                        <tr
+                          key={task.id}
+                          className={cn(
+                            componentStyles.tableRow,
+                            index % 2 === 0
+                              ? componentStyles.tableRowEven
+                              : componentStyles.tableRowOdd
+                          )}
+                        >
+                          <td className={componentStyles.tableCell}>
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => toggleTask(task.id)}
+                                className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors flex-shrink-0 ${
+                                  checkedTasks.has(task.id)
+                                    ? "bg-primary border-primary text-primary-foreground"
+                                    : "border-border hover:border-primary"
+                                }`}
+                              >
+                                {checkedTasks.has(task.id) && (
+                                  <Check className="size-3" />
+                                )}
+                              </button>
+                              <div className="space-y-1">
+                                <div className="text-sm font-medium">
+                                  {task.text}
                                 </div>
-                              )}
+                                {task.caseNumber && (
+                                  <div>
+                                    <span
+                                      className={cn(
+                                        componentStyles.metadataTag,
+                                        "text-xs"
+                                      )}
+                                    >
+                                      {task.caseNumber}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </td>
-                      </tr>
-                    </>
-                  );
-                })}
+                          </td>
+                        </tr>
+                      </>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>

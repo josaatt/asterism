@@ -109,20 +109,7 @@ export type LegalFilter = {
 };
 
 const LegalFilterIcon = ({ type }: { type: LegalFilterType | string }) => {
-  switch (type) {
-    case LegalFilterType.COURT:
-      return <Building2 className="size-3.5" />;
-    case LegalFilterType.LEGAL_AREA:
-      return <Scale className="size-3.5" />;
-    case LegalFilterType.YEAR:
-      return <Calendar className="size-3.5" />;
-    case LegalFilterType.CASE_NUMBER:
-      return <Hash className="size-3.5" />;
-    case LegalFilterType.KEYWORDS:
-      return <Tag className="size-3.5" />;
-    default:
-      return <Gavel className="size-3.5" />;
-  }
+  return null;
 };
 
 // Extract unique values from legal cases data
@@ -149,25 +136,25 @@ export const legalFilterViewOptions: LegalFilterOption[][] = [
   [
     {
       name: LegalFilterType.COURT,
-      icon: <LegalFilterIcon type={LegalFilterType.COURT} />,
+      icon: undefined,
     },
     {
       name: LegalFilterType.LEGAL_AREA, 
-      icon: <LegalFilterIcon type={LegalFilterType.LEGAL_AREA} />,
+      icon: undefined,
     },
     {
       name: LegalFilterType.YEAR,
-      icon: <LegalFilterIcon type={LegalFilterType.YEAR} />,
+      icon: undefined,
     },
   ],
   [
     {
       name: LegalFilterType.CASE_NUMBER,
-      icon: <LegalFilterIcon type={LegalFilterType.CASE_NUMBER} />,
+      icon: undefined,
     },
     {
       name: LegalFilterType.KEYWORDS,
-      icon: <LegalFilterIcon type={LegalFilterType.KEYWORDS} />,
+      icon: undefined,
     },
   ],
 ];
@@ -179,7 +166,7 @@ export const courtFilterOptions: LegalFilterOption[] = getUniqueValues('court').
     const category = swedishCourts.find(cat => cat.courts.includes(court));
     return {
       name: court,
-      icon: <Building2 className="size-3.5" />,
+      icon: undefined,
       label: category?.name
     };
   }
@@ -188,28 +175,28 @@ export const courtFilterOptions: LegalFilterOption[] = getUniqueValues('court').
 export const legalAreaFilterOptions: LegalFilterOption[] = getUniqueValues('legalArea').map(
   (area) => ({
     name: area,
-    icon: <Scale className="size-3.5" />,
+    icon: undefined,
   })
 );
 
 export const yearFilterOptions: LegalFilterOption[] = getUniqueValues('date').map(
   (year) => ({
     name: year,
-    icon: <Calendar className="size-3.5" />,
+    icon: undefined,
   })
 );
 
 export const keywordFilterOptions: LegalFilterOption[] = getUniqueValues('keywords').map(
   (keyword) => ({
     name: keyword,
-    icon: <Tag className="size-3.5" />,
+    icon: undefined,
   })
 );
 
 export const caseNumberFilterOptions: LegalFilterOption[] = getUniqueValues('caseNumber').map(
   (caseNumber) => ({
     name: caseNumber,
-    icon: <Hash className="size-3.5" />,
+    icon: undefined,
   })
 );
 
@@ -233,20 +220,18 @@ const legalFilterOperators = ({
     case LegalFilterType.LEGAL_AREA:
     case LegalFilterType.YEAR:
     case LegalFilterType.CASE_NUMBER:
-      if (Array.isArray(filterValues) && filterValues.length > 1) {
-        return [FilterOperator.IS_ANY_OF, FilterOperator.IS_NOT];
-      } else {
-        return [FilterOperator.IS, FilterOperator.IS_NOT];
-      }
+      return [
+        FilterOperator.IS,
+        FilterOperator.IS_NOT,
+        FilterOperator.IS_ANY_OF
+      ];
     case LegalFilterType.KEYWORDS:
-      if (Array.isArray(filterValues) && filterValues.length > 1) {
-        return [
-          FilterOperator.INCLUDE_ANY_OF,
-          FilterOperator.EXCLUDE_ALL_OF,
-        ];
-      } else {
-        return [FilterOperator.INCLUDE, FilterOperator.DO_NOT_INCLUDE];
-      }
+      return [
+        FilterOperator.INCLUDE,
+        FilterOperator.DO_NOT_INCLUDE,
+        FilterOperator.INCLUDE_ANY_OF,
+        FilterOperator.EXCLUDE_ALL_OF,
+      ];
     default:
       return [];
   }
@@ -301,6 +286,22 @@ const LegalFilterValueCombobox = ({
   // Special handling for court filter to show in three columns
   const isCourtFilter = filterType === LegalFilterType.COURT;
   
+  // Check if there are any results matching the search
+  const filteredSelectedValues = filterValues.filter((value) => 
+    !commandInput || value.toLowerCase().includes(commandInput.toLowerCase())
+  );
+  
+  const hasResults = isCourtFilter ? 
+    // For court filter, check if any court matches the search
+    legalFilterViewToFilterOptions[filterType]?.some((filter) => 
+      !commandInput || filter.name.toLowerCase().includes(commandInput.toLowerCase())
+    ) || false :
+    // For other filters, check both selected and non-selected values
+    filteredSelectedValues.length > 0 || 
+    nonSelectedFilterValues?.some((filter) => 
+      !commandInput || filter.name.toLowerCase().includes(commandInput.toLowerCase())
+    ) || false;
+  
   return (
     <Popover
       open={open}
@@ -318,21 +319,6 @@ const LegalFilterValueCombobox = ({
   text-muted-foreground hover:text-primary shrink-0"
       >
         <div className="flex gap-1.5 items-center">
-          <div className="flex items-center flex-row -space-x-1.5">
-            <AnimatePresence mode="popLayout">
-              {filterValues?.slice(0, 3).map((value) => (
-                <motion.div
-                  key={value}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <LegalFilterIcon type={value} />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
           {filterValues?.length === 0
             ? `Välj ${filterType.toLowerCase()}...`
             : filterValues?.length === 1
@@ -340,7 +326,11 @@ const LegalFilterValueCombobox = ({
             : `${filterValues?.length} valda`}
         </div>
       </PopoverTrigger>
-      <PopoverContent className={isCourtFilter ? "w-[800px] p-0" : "w-[250px] p-0"}>
+      <PopoverContent 
+        className={isCourtFilter ? "w-[800px] p-0" : "w-[250px] p-0"}
+        align="start"
+        sideOffset={4}
+      >
         <AnimateChangeInHeight>
           <Command>
             <CommandInput
@@ -352,9 +342,9 @@ const LegalFilterValueCombobox = ({
               }}
             />
             <CommandList>
-              <CommandEmpty>Inga resultat hittades.</CommandEmpty>
+              {!hasResults && <CommandEmpty>Inga resultat hittades.</CommandEmpty>}
               <CommandGroup>
-                {filterValues.map((value) => (
+                {filteredSelectedValues.map((value) => (
                   <CommandItem
                     key={value}
                     className="group flex gap-2 items-center data-[selected=true]:text-primary-foreground"
@@ -363,7 +353,6 @@ const LegalFilterValueCombobox = ({
                     }}
                   >
                     <Checkbox checked={true} />
-                    <LegalFilterIcon type={value} />
                     <span className="text-foreground group-data-[selected=true]:text-primary-foreground">{value}</span>
                   </CommandItem>
                 ))}
@@ -378,7 +367,14 @@ const LegalFilterValueCombobox = ({
                         {swedishCourts.map((category) => {
                           // Show ALL courts in this category, both selected and non-selected
                           const allCategoryOptions = legalFilterViewToFilterOptions[filterType]?.filter(
-                            (filter) => category.courts.includes(filter.name)
+                            (filter) => {
+                              // Filter by search input if present
+                              if (commandInput) {
+                                return category.courts.includes(filter.name) && 
+                                       filter.name.toLowerCase().includes(commandInput.toLowerCase());
+                              }
+                              return category.courts.includes(filter.name);
+                            }
                           ) || [];
                           
                           if (allCategoryOptions.length === 0) return null;
@@ -452,7 +448,6 @@ const LegalFilterValueCombobox = ({
                                         checked={isSelected}
                                         className={isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 transition-opacity'}
                                       />
-                                      {filter.icon}
                                       <span className={`text-xs leading-tight ${
                                         isSelected ? 'text-primary font-medium' : 'text-foreground'
                                       }`}>
@@ -483,7 +478,6 @@ const LegalFilterValueCombobox = ({
                             checked={false}
                             className="opacity-0 group-data-[selected=true]:opacity-100"
                           />
-                          {filter.icon}
                           <span className="text-foreground group-data-[selected=true]:text-primary-foreground">
                             {filter.name}
                           </span>
@@ -520,7 +514,6 @@ export default function LegalFilters({
       {filters.map((filter) => (
           <div key={filter.id} className="flex gap-[1px] items-center text-xs">
             <div className="flex gap-1.5 shrink-0 rounded-l bg-muted px-1.5 py-1 items-center">
-              <LegalFilterIcon type={filter.type} />
               {filter.type}
             </div>
             <LegalFilterOperatorDropdown

@@ -81,7 +81,7 @@ function FilterSelect({
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0" align="start" sideOffset={4}>
         <Command>
           <CommandInput placeholder={`Sök ${placeholder.toLowerCase()}...`} />
           <CommandList>

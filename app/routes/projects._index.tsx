@@ -89,15 +89,12 @@ export default function ProjectsIndex() {
             }
             break;
             
-          case ProjectFilterType.MEMBER_COUNT:
-            const memberCount = project.members.length;
-            const filterCount = parseInt(filter.value[0]);
-            if (filter.operator === FilterOperator.EQUAL_TO) {
-              matches = memberCount === filterCount;
-            } else if (filter.operator === FilterOperator.MORE_THAN) {
-              matches = memberCount > filterCount;
-            } else if (filter.operator === FilterOperator.LESS_THAN) {
-              matches = memberCount < filterCount;
+          case ProjectFilterType.MEMBERS:
+            const projectMemberIds = project.members.map(m => m.userId);
+            if (filter.operator === FilterOperator.IS || filter.operator === FilterOperator.IS_ANY_OF) {
+              matches = filter.value.some(userId => projectMemberIds.includes(userId));
+            } else if (filter.operator === FilterOperator.IS_NOT) {
+              matches = !filter.value.some(userId => projectMemberIds.includes(userId));
             }
             break;
             
