@@ -155,10 +155,10 @@ export function Sidebar() {
                       </motion.li>
                     </Link>
                     <Link
-                      to="/projects"
+                      to="/projekt"
                       className={cn(
                         "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary",
-                        pathname?.includes("/projects") && "bg-muted text-primary",
+                        pathname?.includes("/projekt") && "bg-muted text-primary",
                       )}
                     >
                       <FolderOpen className="h-4 w-4" />
@@ -183,10 +183,10 @@ export function Sidebar() {
                       </motion.li>
                     </Link>
                     <Link
-                      to="/bookmarks"
+                      to="/bokmärken"
                       className={cn(
                         "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary",
-                        pathname?.includes("/bookmarks") && "bg-muted text-primary",
+                        pathname?.includes("/bokmärken") && "bg-muted text-primary",
                       )}
                     >
                       <BookMarked className="h-4 w-4" />
@@ -198,10 +198,10 @@ export function Sidebar() {
                     </Link>
                     <Separator className="w-full" />
                     <Link
-                      to="/timeline"
+                      to="/tidslinje"
                       className={cn(
                         "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary",
-                        pathname?.includes("/timeline") && "bg-muted text-primary",
+                        pathname?.includes("/tidslinje") && "bg-muted text-primary",
                       )}
                     >
                       <Clock className="h-4 w-4" />
@@ -212,10 +212,10 @@ export function Sidebar() {
                       </motion.li>
                     </Link>
                     <Link
-                      to="/entities"
+                      to="/entiteter"
                       className={cn(
                         "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary",
-                        pathname?.includes("/entities") && "bg-muted text-primary",
+                        pathname?.includes("/entiteter") && "bg-muted text-primary",
                       )}
                     >
                       <Map className="h-4 w-4" />
@@ -226,10 +226,10 @@ export function Sidebar() {
                       </motion.li>
                     </Link>
                     <Link
-                      to="/drafts"
+                      to="/utkast"
                       className={cn(
                         "flex h-8 w-full flex-row items-center rounded-md px-2 py-1.5 transition hover:bg-muted hover:text-primary",
-                        pathname?.includes("/drafts") && "bg-muted text-primary",
+                        pathname?.includes("/utkast") && "bg-muted text-primary",
                       )}
                     >
                       <KanbanSquare className="h-4 w-4" />

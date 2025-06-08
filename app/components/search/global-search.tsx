@@ -177,7 +177,7 @@ function getSearchResults(query: string) {
       type: 'project' as const,
       title: project.name,
       description: project.description,
-      url: `/projects/${project.id}`,
+      url: `/projekt/${project.id}`,
     }));
 
   // Sök i artefakter
@@ -192,7 +192,7 @@ function getSearchResults(query: string) {
       type: 'artefact' as const,
       title: artefact.title,
       description: `${getArtefactTypeLabel(artefact.type)} • ${getUserById(artefact.createdBy)?.name}`,
-      url: `/projects/${artefact.projectId}/artefacts/${artefact.id}`,
+      url: `/projekt/${artefact.projectId}/artefakter/${artefact.id}`,
       projectId: artefact.projectId
     }));
 
@@ -226,7 +226,7 @@ function getSearchResults(query: string) {
       type: 'bookmark' as const,
       title: bookmark.title,
       description: bookmark.description || bookmark.url,
-      url: `/bookmarks?bookmark=${bookmark.id}`,
+      url: `/bokmärken?bookmark=${bookmark.id}`,
     }));
 
   return {

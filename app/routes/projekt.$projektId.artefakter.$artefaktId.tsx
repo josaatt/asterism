@@ -23,12 +23,12 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const { projectId, artefactId } = params;
+  const { projektId, artefaktId } = params;
   
-  const project = getProjectById(projectId!);
-  const artefact = getArtefactById(artefactId!);
+  const project = getProjectById(projektId!);
+  const artefact = getArtefactById(artefaktId!);
   
-  if (!project || !artefact || artefact.projectId !== projectId) {
+  if (!project || !artefact || artefact.projectId !== projektId) {
     throw new Response("Artefakt hittades inte", { status: 404 });
   }
 
@@ -50,7 +50,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const { projectId, artefactId } = params;
+  const { projektId, artefaktId } = params;
   const formData = await request.formData();
   
   const intent = formData.get("intent") as string;
@@ -60,7 +60,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const content = formData.get("content") as string;
 
     // Hitta och uppdatera artefakt
-    const artefactIndex = mockArtefacts.findIndex(a => a.id === artefactId);
+    const artefactIndex = mockArtefacts.findIndex(a => a.id === artefaktId);
     if (artefactIndex !== -1) {
       mockArtefacts[artefactIndex] = {
         ...mockArtefacts[artefactIndex],
@@ -74,7 +74,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         id: `log-${Date.now()}`,
         timestamp: new Date(),
         userId: currentUser.id,
-        projectId: projectId!,
+        projectId: projektId!,
         action: "artefact.update",
         details: { 
           artefactId,

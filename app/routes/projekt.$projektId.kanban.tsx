@@ -36,9 +36,9 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const projectId = params.projectId!;
+  const projektId = params.projektId!;
   
-  const project = getProjectById(projectId);
+  const project = getProjectById(projektId);
   if (!project) {
     throw new Response("Projekt hittades inte", { status: 404 });
   }

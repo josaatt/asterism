@@ -21,8 +21,8 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const projectId = params.projectId!;
-  const project = getProjectById(projectId);
+  const projektId = params.projektId!;
+  const project = getProjectById(projektId);
   
   if (!project) {
     throw new Response("Projekt hittades inte", { status: 404 });
@@ -38,7 +38,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
-  const projectId = params.projectId!;
+  const projektId = params.projektId!;
   const formData = await request.formData();
   
   const title = formData.get("title") as string;
@@ -63,7 +63,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
   // Skapa ny artefakt
   const newArtefact = {
     id: `art-${Date.now()}`,
-    projectId,
+    projectId: projektId,
     type,
     title: title.trim(),
     content: content?.trim() || '',
@@ -80,7 +80,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     id: `log-${Date.now()}`,
     timestamp: new Date(),
     userId: currentUser.id,
-    projectId,
+    projectId: projektId,
     action: "artefact.create",
     details: { 
       artefactId: newArtefact.id,
@@ -89,7 +89,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
   });
 
-  return redirect(`/projects/${projectId}/artefacts/${newArtefact.id}`);
+  return redirect(`/projekt/${projektId}/artefakter/${newArtefact.id}`);
 }
 
 const artefactTypes: { value: ArtefactType; label: string; description: string }[] = [
@@ -238,7 +238,7 @@ export default function NewArtefact() {
               </button>
               
               <a
-                href={`/projects/${project.id}`}
+                href={`/projekt/${project.id}`}
                 className="px-6 py-2 border border-border text-foreground rounded-md hover:bg-muted transition-colors"
               >
                 Avbryt

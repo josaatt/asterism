@@ -20,9 +20,9 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const projectId = params.projectId!;
+  const projektId = params.projektId!;
   
-  const project = getProjectById(projectId);
+  const project = getProjectById(projektId);
   if (!project) {
     throw new Response("Projekt hittades inte", { status: 404 });
   }
@@ -33,7 +33,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     throw new Response("Ingen behörighet", { status: 403 });
   }
 
-  const auditLog = getAuditLogForProject(projectId);
+  const auditLog = getAuditLogForProject(projektId);
   
   // Lägg till användarinformation
   const auditLogWithUsers = auditLog.map(entry => ({

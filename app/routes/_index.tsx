@@ -567,7 +567,7 @@ function WorkTasksSection() {
                         "cursor-pointer hover:bg-muted/50"
                       )}
                       onClick={() =>
-                        (window.location.href = `/projects/${task.id}`)
+                        (window.location.href = `/projekt/${task.id}`)
                       }
                     >
                       <td className={componentStyles.tableCell}>
@@ -661,7 +661,7 @@ function WorkTasksSection() {
                         "cursor-pointer hover:bg-muted/50"
                       )}
                       onClick={() =>
-                        (window.location.href = `/projects/${task.id}`)
+                        (window.location.href = `/projekt/${task.id}`)
                       }
                     >
                       <td className={componentStyles.tableCell}>
@@ -722,7 +722,7 @@ function WorkTasksSection() {
 const features = [
   {
     title: "ärenden",
-    path: "/projects",
+    path: "/projekt",
     description:
       "Hantera juridiska ärenden med strukturerad dokumentation, artefakter och samarbetsverktyg.",
     tags: ["Ärendehantering", "Samarbete", "Dokumentation"],
@@ -736,28 +736,28 @@ const features = [
   },
   {
     title: "utredningar",
-    path: "/drafts",
+    path: "/utkast",
     description:
       "Skriv och redigera juridiska utredningar med Markdown-stöd och smart länkning.",
     tags: ["Utredningar", "Markdown", "Redigering"],
   },
   {
     title: "bokmärken",
-    path: "/bookmarks",
+    path: "/bokmärken",
     description:
       "Spara och organisera viktiga juridiska källor och referenser för senare användning.",
     tags: ["Referenser", "Källor", "Organisation"],
   },
   {
     title: "tidslinje",
-    path: "/timeline",
+    path: "/tidslinje",
     description:
       "Visualisera kronologiska händelseförlopp och viktiga datum i juridiska ärenden.",
     tags: ["Visualisering", "Kronologi", "Händelser"],
   },
   {
     title: "relationskarta",
-    path: "/entities",
+    path: "/entiteter",
     description:
       "Kartlägg komplexa relationer mellan personer, företag och juridiska entiteter.",
     tags: ["Relationer", "Visualisering", "Entiteter"],

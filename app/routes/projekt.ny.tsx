@@ -66,7 +66,7 @@ export async function action({ request }: ActionFunctionArgs) {
     }
   });
 
-  return redirect(`/projects/${newProject.id}`);
+  return redirect(`/projekt/${newProject.id}`);
 }
 
 export default function NewProject() {
@@ -155,7 +155,7 @@ export default function NewProject() {
               </button>
               
               <a
-                href="/projects"
+                href="/projekt"
                 className="px-6 py-2 border border-border text-foreground rounded-md hover:bg-muted transition-colors"
               >
                 Avbryt

@@ -20,7 +20,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const projectId = params.projectId!;
+  const projectId = params.projektId!;
   
   const project = getProjectById(projectId);
   if (!project) {
@@ -60,9 +60,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 const tabs = [
   { id: 'overview', label: 'Översikt', path: '' },
-  { id: 'artefacts', label: 'Artefakter', path: '/artefacts' },
+  { id: 'artefacts', label: 'Artefakter', path: '/artefakter' },
   { id: 'kanban', label: 'Kanban', path: '/kanban' },
-  { id: 'activity', label: 'Aktivitetslogg', path: '/activity' },
+  { id: 'activity', label: 'Aktivitetslogg', path: '/aktivitet' },
   { id: 'settings', label: 'Inställningar', path: '/settings' }
 ];
 
@@ -73,7 +73,7 @@ export default function ProjectView() {
   // Bestäm aktiv flik baserat på URL
   const activeTab = tabs.find(tab => {
     if (tab.path === '') {
-      return location.pathname === `/projects/${project.id}`;
+      return location.pathname === `/projekt/${project.id}`;
     }
     return location.pathname.endsWith(tab.path);
   })?.id || 'overview';
@@ -136,7 +136,7 @@ export default function ProjectView() {
             {tabs.map((tab) => (
               <Link
                 key={tab.id}
-                to={`/projects/${project.id}${tab.path}`}
+                to={`/projekt/${project.id}${tab.path}`}
                 className={cn(
                   "py-2 px-1 border-b-2 font-medium text-sm transition-colors",
                   activeTab === tab.id
@@ -202,7 +202,7 @@ function ProjectOverview({
             <h2 className="text-xl  text-foreground">Artefakter</h2>
             {canEdit && (
               <Link
-                to={`/projects/${project.id}/artefacts/new`}
+                to={`/projekt/${project.id}/artefakter/ny`}
                 className="px-3 py-1 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
               >
                 Skapa ny
@@ -221,7 +221,7 @@ function ProjectOverview({
                     {items.slice(0, 3).map((artefact: any) => (
                       <Link
                         key={artefact.id}
-                        to={`/projects/${project.id}/artefacts/${artefact.id}`}
+                        to={`/projekt/${project.id}/artefakter/${artefact.id}`}
                         className="block text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
                         • {artefact.title}
@@ -229,7 +229,7 @@ function ProjectOverview({
                     ))}
                     {items.length > 3 && (
                       <Link
-                        to={`/projects/${project.id}/artefacts`}
+                        to={`/projekt/${project.id}/artefakter`}
                         className="text-sm text-primary hover:underline"
                       >
                         Visa alla {items.length} →
@@ -244,7 +244,7 @@ function ProjectOverview({
               <p className="text-muted-foreground mb-4">Inga artefakter ännu</p>
               {canEdit && (
                 <Link
-                  to={`/projects/${project.id}/artefacts/new`}
+                  to={`/projekt/${project.id}/artefakter/ny`}
                   className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
                 >
                   Skapa första artefakt
@@ -299,7 +299,7 @@ function ProjectOverview({
                   </div>
                 ))}
                 <Link
-                  to={`/projects/${project.id}/activity`}
+                  to={`/projekt/${project.id}/aktivitet`}
                   className="text-sm text-primary hover:underline"
                 >
                   Visa all aktivitet →

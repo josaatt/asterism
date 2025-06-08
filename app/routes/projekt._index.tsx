@@ -199,7 +199,7 @@ export default function ProjectsIndex() {
                 <span className="font-medium">{projects.length}</span> ärenden
               </p>
               <Link
-                to="/projects/new"
+                to="/projekt/ny"
                 className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
               >
                 Nytt ärende
@@ -438,7 +438,7 @@ function ProjectTableView({ projects, tableSort, onSort }: {
                 )}
               >
                 <td className={componentStyles.tableCell}>
-                  <Link to={`/projects/${project.id}`} className="hover:text-primary transition-colors">
+                  <Link to={`/projekt/${project.id}`} className="hover:text-primary transition-colors">
                     <div className="space-y-1">
                       <h3 className={componentStyles.tableTitle}>
                         {project.name}
@@ -519,7 +519,7 @@ function ProjectCard({ project }: { project: any }) {
 
   return (
     <Link
-      to={`/projects/${project.id}`}
+      to={`/projekt/${project.id}`}
       className={cn(
         componentStyles.card,
         "page-transition cursor-pointer border-l-4",
